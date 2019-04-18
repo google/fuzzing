@@ -121,6 +121,18 @@ A seed corpus is stored as a directory where every individual file represents on
 
 # Coverage discoverability
 
+It is often insufficient to have a seed corpus with good code coverage
+to claim good *fuzzability*, i.e. the ability of a fuzzing engine to discover
+many code paths in the API under test.
+
+For example, imagine we are fuzzing an API that consumes an encrypted input,
+and we have a comprehensive seed corpus with such encrypted inputs.
+This seed corpus will provide good code coverage, but any mutation
+of the inputs will be rejected early as broken.
+
+So, it is important to ensure that the fuzz target can discover
+a large subset of reachable pieces of code without using the seed corpus.
+
 # Input size
 
 # Dictionaries
