@@ -45,7 +45,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   ...
 ```
 
-Or in the global scope if that works for you:
+Or (less preferable) in the global scope if that works for you:
 
 ```cpp
 // fuzz_target.cc
@@ -56,19 +56,53 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
 # Determinism
 
+A fuzz target needs to be deterministic, i.e. given the same input it should
+have the same behavior.
+This means, for example, that a fuzz target should not use `rand()` or any other
+source of randomness.
+
+
 # Speed
+
+Fuzzing is a search algorithm that requires **many** iterations, and so
+a good fuzz target should be very fast.
+
+A typical good fuzz target will have an order of 1000 executions per second per
+one CPU core on average (exec/s) or more. For lightweight targets, 10000 exec/s or more.
+
+If your fuzz target has less than 10 exec/s you are probably doing something
+wrong. We recommend to profile fuzz targets and eliminate any obvious hot
+spots.
+
+# Memory consumption
+
+For CPU-efficient fuzzing a good fuzz target should consume less RAM than it is
+available on a given (virtual) machine per one CPU core.
+There is no one-size-fits-all RAM threshold, but as of 2019 a typical good fuzz
+target would consume less than 1.5Gb.
 
 # Global state
 
-# Timeouts and OOMs
+Ideally, a fuzz target should not modify a global state because otherwise
+the fuzz target may be non-deterministic.
 
-# Shallow bugs
+It may not be possible in every case
+(strictly speaking, even calling `malloc()` modifies a global state).
+
+# Timeouts, OOMs, shallo bugs
+
+A good fuzz target should not have any
+timeouts (inputs that takes too long to process),
+OOMs(input that cause the fuzz target to consume too much RAM),
+or shallow (easily discoverable) bugs.
+Otherwise fuzzing will stall quickly.
+
 
 # Seed corpus
 
 # Coverage discoverability
 
-# Input sizes
+# Input size
 
 # Dictionaries
 
@@ -78,7 +112,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
 # Threads
 
-# Splitting the input
+# Splitting inputs
+
+# Structure-aware fuzzing
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
