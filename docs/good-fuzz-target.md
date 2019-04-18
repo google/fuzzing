@@ -139,7 +139,13 @@ a large subset of reachable pieces of code without using the seed corpus.
 
 # IO
 
-## fmemopen
+A good target does not use I/O:
+* Avoid debug output to `stderr` or `stdout` as it slows down fuzzing.
+* Avoid reading from disk other than during one-time initialization,
+* Avoid writing to disk.
+* Avoid fmemopen. It might be tempting to use `fmemopen` to fuzz APIs that
+  consume `FILE*`, but it may inhibit important search algorithms in the fuzzing engine.
+  Prefer using direct in-memory APIs, even if it requires refactoring your API.
 
 # Threads
 
