@@ -6,9 +6,9 @@ This is work in progress, stay tuned.
 
 # Related projects
 
-* https://github.com/google/oss-fuzz
-* https://github.com/google/clusterfuzz
-* https://github.com/google/fuzzer-test-suite
+* [github.com/google/oss-fuzz]
+* [github.com/google/clusterfuzz]
+* [github.com/google/fuzzer-test-suite]
 
 # Disclaimer
 This is not an official Google product.
