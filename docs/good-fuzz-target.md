@@ -6,6 +6,7 @@ gives advice on how to make your fuzz targets really good.
 # Basics
 
 A *fuzz target* is a function that accepts an array of bytes and does something interesting with these bytes using the API under test.
+We define a specific signature for fuzz targets:
 
 ```cpp
 // fuzz_target.cc
