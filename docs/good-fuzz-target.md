@@ -24,7 +24,7 @@ The basic things to remember about a fuzz target:
 
 * The fuzzing engine will execute it many times with different inputs in the same process.
 * It must tolerate any kind of input (empty, huge, malformed, etc).
-* It must not exit() on any input.
+* It must not `exit()` or `abort()` on any input (if it does, it's a bug).
 * It may use threads but ideally all threads should be joined at the end of the function.
 * It must be as deterministic as possible. Non-determinism (e.g. random decisions not based on the input bytes) will make fuzzing inefficient.
 * It must be fast. Try avoiding cubic or greater complexity, logging, or excessive memory consumption.
@@ -33,8 +33,38 @@ The basic things to remember about a fuzz target:
 
 More details follow.
 
-
 # One-time initialization
+If the API under test needs to be initialized, there are two basic options.
+
+The simplest and the recommended way is to have a statically initialized global object inside LLVMFuzzerTestOneInput:
+
+```cpp
+// fuzz_target.cc
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+  static bool Initialized = DoInitialization();
+  ...
+```
+
+Or in global scope if that works for you:
+
+```cpp
+// fuzz_target.cc
+static bool Initialized = DoInitialization();
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+  ...
+```
+
+Alternatively, you may define an optional init function and it will receive the program arguments that you can read and modify.
+Do this *only* if you really need to access argv/argc.
+This method is also less portable and may not be supported by some fuzzing
+engines.
+
+```cpp
+extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv) {
+ ReadAndMaybeModify(argc, argv);
+ return 0;
+}
+```
 
 # Determinism
 
