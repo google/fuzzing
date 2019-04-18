@@ -34,7 +34,7 @@ The basic things to remember about a fuzz target:
 More details follow.
 
 # One-time initialization
-If the API under test needs to be initialized, there are two basic options.
+Sometimes an API under test needs to be initialized.
 
 The simplest and the recommended way is to have a statically initialized global object inside LLVMFuzzerTestOneInput:
 
@@ -45,25 +45,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   ...
 ```
 
-Or in global scope if that works for you:
+Or in the global scope if that works for you:
 
 ```cpp
 // fuzz_target.cc
 static bool Initialized = DoInitialization();
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   ...
-```
-
-Alternatively, you may define an optional init function and it will receive the program arguments that you can read and modify.
-Do this *only* if you really need to access argv/argc.
-This method is also less portable and may not be supported by some fuzzing
-engines.
-
-```cpp
-extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv) {
- ReadAndMaybeModify(argc, argv);
- return 0;
-}
 ```
 
 # Determinism
@@ -89,6 +77,8 @@ extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv) {
 # fmemopen
 
 # Threads
+
+# Splitting the input
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
