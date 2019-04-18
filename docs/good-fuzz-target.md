@@ -17,18 +17,48 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 ```
 
 Note that the interface for this function is C, and so it can be implemented in any programming language that supports C interface.
-Despite the name referecing the [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html) fuzz targets are independent from a particular *fuzzing engine* and can be used with fuzzing, symbolic execution, or any other form of testing
+Despite the name referecing the [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html) fuzz targets are
+independent from a particular *fuzzing engine* and can be used with fuzzing, symbolic execution, or any other form of testing. 
 
+The basic things to remember about a fuzz target:
+
+* The fuzzing engine will execute it many times with different inputs in the same process.
+* It must tolerate any kind of input (empty, huge, malformed, etc).
+* It must not exit() on any input.
+* It may use threads but ideally all threads should be joined at the end of the function.
+* It must be as deterministic as possible. Non-determinism (e.g. random decisions not based on the input bytes) will make fuzzing inefficient.
+* It must be fast. Try avoiding cubic or greater complexity, logging, or excessive memory consumption.
+* Ideally, it should not modify any global state (although that’s not strict).
+* Usually, the narrower the target the better. E.g. if your target can parse several data formats, split it into several targets, one per format.
+
+More details follow.
+
+
+# One-time initialization
 
 # Determinism
 
 # Speed
+
+# Global state
+
+# Timeouts and OOMs
 
 # Shallow bugs
 
 # Seed corpus
 
 # Coverage discoverability
+
+# Input sizes
+
+# Dictionaries
+
+# IO
+
+# fmemopen
+
+# Threads
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
