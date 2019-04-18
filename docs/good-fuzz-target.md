@@ -33,6 +33,15 @@ The basic things to remember about a fuzz target:
 
 More details follow.
 
+# Build and test integration
+
+A good fuzz target participates in the project's continuous testing:
+* it resides in the same repository as the code and other tests,
+* it is being compiled with available/applicable [sanitizers](https://github.com/google/sanitizers)
+as part of the usual testing process and linked e.g. with this [standalone runner](https://github.com/llvm-mirror/compiler-rt/blob/master/lib/fuzzer/standalone/StandaloneFuzzTargetMain.c) or similar.
+* it is being executed as part of the usual testing process using the [seed corpus](#seed-corpus) as inputs.
+
+
 # One-time initialization
 Sometimes an API under test needs to be initialized.
 
@@ -92,13 +101,23 @@ It may not be possible in every case
 # Timeouts, OOMs, shallo bugs
 
 A good fuzz target should not have any
-timeouts (inputs that takes too long to process),
+timeouts (inputs that take too long to process),
 OOMs(input that cause the fuzz target to consume too much RAM),
 or shallow (easily discoverable) bugs.
 Otherwise fuzzing will stall quickly.
 
-
 # Seed corpus
+
+In most cases a good fuzz target should be accompanied with a *seed corpus*,
+which is a set of representative inputs for the fuzz target.
+These inputs combined should cover large portions of the API under test,
+ideally achieving 100% coverage (different coverage metrics can be applied, e.g.
+block coverage or edge coverage, depending on a specific case).
+
+Avoid large seed inputs when smaller inputs are sufficient for providing the
+same coverage.
+
+A seed corpus is stored as a directory where every individual file represents one input.
 
 # Coverage discoverability
 
@@ -108,13 +127,17 @@ Otherwise fuzzing will stall quickly.
 
 # IO
 
-# fmemopen
+## fmemopen
 
 # Threads
+
+# Code size
 
 # Splitting inputs
 
 # Structure-aware fuzzing
+
+# Examples
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
