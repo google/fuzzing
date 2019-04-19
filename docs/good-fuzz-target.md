@@ -184,6 +184,7 @@ it may still slow down fuzzing.
 
 # Splitting Inputs
 
+TODO: large topic, will send as a separate PR
 
 # Structure-Aware Fuzzing
 
@@ -192,10 +193,6 @@ e.g. compressed, encrypted, checksum-protected, serialization formats,
 database query languages, programming languages, etc.
 Consider [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md)
 for such targets.
-
-# Examples
-
-TODO
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
