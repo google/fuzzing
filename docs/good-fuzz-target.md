@@ -139,23 +139,63 @@ a large subset of reachable pieces of code without using the seed corpus.
 
 # IO
 
-A good target does not use I/O:
+A good fuzz target does not use I/O:
 * Avoid debug output to `stderr` or `stdout` as it slows down fuzzing.
-* Avoid reading from disk other than during one-time initialization,
+* Avoid reading from disk other than during one-time initialization.
 * Avoid writing to disk.
-* Avoid fmemopen. It might be tempting to use `fmemopen` to fuzz APIs that
-  consume `FILE*`, but it may inhibit important search algorithms in the fuzzing engine.
-  Prefer using direct in-memory APIs, even if it requires refactoring your API.
+
+# fmemopen
+
+It might be tempting to use `fmemopen` to fuzz APIs that
+consume `FILE*`, but it may inhibit important search algorithms in the fuzzing engine.
+Prefer using direct in-memory APIs whenever possible.
 
 # Threads
 
-# Code size
+If you absolutely need to fuzz with threads,
+minimize the number of threads spawned by the fuzz target on every input
+(thread creation is slow).
 
-# Splitting inputs
+If your API uses thread pools, you may create the thread pool during the
+one-time initialization, but make sure the workers are idle between the
+executions of the fuzz target (i.e. when the fuzzing engine is not running the
+fuzz target in the main threads, other threads should be sleeping).
 
-# Structure-aware fuzzing
+# Large APIs
+
+Fuzzing is a search algorithm with super-linear complexity,
+i.e. for a fuzz target with N control flow edges the time it takes to discover
+most edges is much greater than `O(N)`, most likely, at least `O(N^3)`.
+
+For any large API prefer to create several fuzz targets that cover subsets of
+the API. However, having a fuzz target for the full API is sometimes also
+useful.
+
+Any API with more than 20000-30000 reachable control flow edges should probably
+considered large.
+
+Example: TODO add links to the pdfium fuzz target and sub targets.
+
+# Unreachable Code
+
+Avoid linking unreachable code into your fuzz target.
+Even if some code linked to the fuzzer binary is never executed,
+it may still slow down fuzzing.
+
+# Splitting Inputs
+
+
+# Structure-Aware Fuzzing
+
+In many cases the API under test consumes highly structured inputs,
+e.g. compressed, encrypted, checksum-protected, serialization formats,
+database query languages, programming languages, etc.
+Consider [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md)
+for such targets.
 
 # Examples
+
+TODO
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
