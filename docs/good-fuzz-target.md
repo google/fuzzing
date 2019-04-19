@@ -36,10 +36,12 @@ More details follow.
 # Build and test integration
 
 A good fuzz target participates in the project's continuous testing:
-* it resides in the same repository as the code and other tests,
-* it is being compiled with available/applicable [sanitizers](https://github.com/google/sanitizers)
-as part of the usual testing process and linked e.g. with this [standalone runner](https://github.com/llvm-mirror/compiler-rt/blob/master/lib/fuzzer/standalone/StandaloneFuzzTargetMain.c) or similar.
-* it is being executed as part of the usual testing process using the [seed corpus](#seed-corpus) as inputs.
+* It resides in the same repository as the code and other tests.
+* It is being compiled with available/applicable [sanitizers](https://github.com/google/sanitizers)
+as part of the usual testing process and linked e.g. with this
+[standalone runner](https://github.com/llvm-mirror/compiler-rt/blob/master/lib/fuzzer/standalone/StandaloneFuzzTargetMain.c) or similar.
+* It is being executed as part of the usual testing process using the [seed corpus](#seed-corpus) as inputs.
+* Inputs that trigger bugs on the fuzz target are added to the [seed corpus](#seed-corpus) as a form of regression testing.
 
 
 # One-time initialization
@@ -119,6 +121,10 @@ same coverage.
 
 A seed corpus is stored as a directory where every individual file represents one input.
 
+When fixing a bug or adding a new functionality to the API, don't forget to
+extend the seed corpus. Monitor the code coverage achieved by the corpus and try
+to keep it close to 100%.
+
 # Coverage discoverability
 
 It is often insufficient to have a seed corpus with good code coverage
@@ -131,11 +137,46 @@ This seed corpus will provide good code coverage, but any mutation
 of the inputs will be rejected early as broken.
 
 So, it is important to ensure that the fuzz target can discover
-a large subset of reachable pieces of code without using the seed corpus.
+a large subset of reachable control flow edges without using the seed corpus.
+
+If fuzzing a given target without a seed corpus for,
+say, a billion iterations, does not provide coverage comparable to a good seed
+corpus, consider
+* Splitting the target (see [Large APIs](#large-apis))
+* Using [dictionaries](#dictionaries)
+* Using [Structure-Aware Fuzzing](#structure-aware-fuzzing)
+
 
 # Input size
 
+If your API consumes inputs of a specific size(s) the best way is to express
+it in the fuzz targer, like this:
+
+```cpp
+// fuzz_target.cc
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+  if (Size > kMaxSize || Size < kMinSize) return 0;
+```
+
+The fuzzing engine will periodically create mutations with a wrong size,
+but it is not going to hurt the fuzzing efficiency too much since most of the time
+will be spent executing valid inputs.
+
+If your API can consume arbitrarily large inputs (e.g. a video codec)
+but you are confident that inputs of a certain size are sufficient to trigger
+all functionality (and bugs), you may also limit the input size the same way.
+In case you are not sure, you may create two targets, one with the limit (fast)
+and one without (slower, but potentially with more coverage).
+
+
 # Dictionaries
+
+If the input type for a fuzz target relies on certain keywords (or magic values)
+using a [dictionary](http://llvm.org/docs/LibFuzzer.html#dictionaries) of such
+keywords might be beneficial.
+
+In future we expect the fuzzing engines to become smarter and stop relying on
+dictionaries, but today dictionaries are often very practical.
 
 # IO
 
@@ -147,8 +188,11 @@ A good fuzz target does not use I/O:
 # fmemopen
 
 It might be tempting to use `fmemopen` to fuzz APIs that
-consume `FILE*`, but it may inhibit important search algorithms in the fuzzing engine.
+consume `FILE*`, but using `fmemopen` may inhibit important search algorithms in the fuzzing engine.
 Prefer using direct in-memory APIs whenever possible.
+
+Of course, if the API under test is built around accessing `FILE*`,
+and there is no in-memory counterpart, then `fmemopen` might be the only choice.
 
 # Threads
 
