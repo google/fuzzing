@@ -17,7 +17,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 ```
 
 Note that the interface for this function is C, and so it can be implemented in any programming language that supports C interface.
-Despite the name referecing the [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html) fuzz targets are
+Despite the name referencing the [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html) fuzz targets are
 independent from a particular *fuzzing engine* and can be used with fuzzing, symbolic execution, or any other form of testing. 
 
 The basic things to remember about a fuzz target:
