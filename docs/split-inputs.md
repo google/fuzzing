@@ -7,12 +7,12 @@ a single fuzzer-generated input into several.
 Splitting a fuzzer-generated input into several independent inputs is required
 very often. Some examples:
 
-* Fuzzing a regular expression library requres
+* Fuzzing a regular expression library requires
    * The regular expression (RE),
    * Flags for RE compilation and matching,
    * A string to search the RE in.
 
-* Fuzzing a audio/video format decoder often requires
+* Fuzzing an audio/video format decoder often requires
   * Decoding flags,
   * Several frames
 
@@ -21,17 +21,17 @@ very often. Some examples:
   * The XML/HTML input.
 
 * Fuzzing a font-rendering library requires
- * The font file,
- * The text to render,
- * Therendering flags.
+  * The font file,
+  * The text to render,
+  * The rendering flags.
 
- TODO: more examples?
+TODO: more examples?
 
 # Common vs Custom Data Format
 
 When trying to split the fuzzer-generated input into several,
 the first question one needs to ask is whether the input format is common,
-i.e. is used or processed by other libraries, API, of fuzz targets.
+i.e. is it used or processed by other libraries, API, of fuzz targets.
 
 If the data format is common (e.g. a widely used media format or network packet
 format) then it is highly desirable for a fuzz target to consume exactly this
@@ -41,7 +41,15 @@ and to use the generated corpus to test/fuzz other targets.
 
 # Embedding / Comments
 
-TODO
+When a fuzz target for a common data format requires some flags, options, or an
+additional auxiliary sub-input, it is sometimes possible to embed the extra input
+inside a custom section or a comment of the main data format.
+
+Examples:
+* PNG allows custom "chunks", and so a fuzz target for a PNG decoder can
+  hide flags in a separate PNG chunk, e.g. `fUZz` ([example](https://github.com/google/oss-fuzz/blob/master/projects/libpng-proto/libpng_transforms_fuzzer.cc)).
+* Programming languages allow single-line comments, e.g. when fuzzing
+  C/C++/Java/JavaScript inputs one may hide a sub-input in a single-line `//` comment. TODO: example?
 
 # First / Last Bytes
 
@@ -54,7 +62,8 @@ TODO
 # Custom Serialization Format
 
 If you do not intend to share the inputs with any other API or fuzz targets,
-then a custom serialization format might be a good option.
+then a custom serialization format might be a good option for a multi-input fuzz
+target.
 
 ## Magic separator
 
@@ -90,8 +99,8 @@ TODO
 A custom [Type-lenth-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
 may sound like a good solution. However, we typically **do not recommend using a custom TLV**
 to split your fuzzer-generated input for the following reasons:
-* this is more test-only code for you to maintain, and easy to get wrong.
-* typicall mutations performed by fuzzing engines, such as inserting a byte,
+* This is more test-only code for you to maintain, and easy to get wrong.
+* Typical mutations performed by fuzzing engines, such as inserting a byte,
   will break the TLV structure too often, making fuzzing less efficient.
 
 ## Protobufs
