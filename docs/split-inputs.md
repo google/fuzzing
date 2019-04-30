@@ -51,19 +51,34 @@ Examples:
 * Programming languages allow single-line comments, e.g. when fuzzing
   C/C++/Java/JavaScript inputs one may hide a sub-input in a single-line `//` comment. TODO: example?
 
-# First / Last Bytes
-
-TODO
 
 # Hash
+When only one small fixed-size sub-input is required (such as flags / options),
+the fuzz target may compute a hash function on the full input and use it as the flag bits.
+This option is very easy to implement, but it's applicability is limited to
+relatively simple cases. The major problem is that a small local mutation of the input
+leads to a large change in the sub-input, which often makes fuzzing less
+efficient.
 
-TODO
+TODO: example.
+
 
 # Custom Serialization Format
 
-If you do not intend to share the inputs with any other API or fuzz targets,
+If you **do not intend to share the corpus** with any other API or fuzz targets,
 then a custom serialization format might be a good option for a multi-input fuzz
 target.
+
+## First / Last Bytes
+
+When only one fixed-size sub-input is required (such as flags / options),
+it is possible to treat the first (or last) `K` bytes of the input as sub-input,
+and the rest of the bytes as the main input.
+
+Just remember to copy the main input into a separate heap buffer of `Size - K`
+bytes, so that a buffer under/overflows on the main input are detected.
+
+TODO: example.
 
 ## Magic separator
 
