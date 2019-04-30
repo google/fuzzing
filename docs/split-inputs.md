@@ -8,22 +8,26 @@ Splitting a fuzzer-generated input into several independent inputs is required
 very often. Some examples:
 
 * Fuzzing a regular expression library requires
-   * The regular expression (RE),
-   * Flags for RE compilation and matching,
-   * A string to search the RE in.
+   * The regular expression (RE)
+   * Flags for RE compilation and matching
+   * A string to search the RE in
 
 * Fuzzing an audio/video format decoder often requires
-  * Decoding flags,
+  * Decoding flags
   * Several frames
 
 * Fuzzing a XSLT or CSS library requires
-  * The stylesheet input,
-  * The XML/HTML input.
+  * The stylesheet input
+  * The XML/HTML input
 
 * Fuzzing a font-rendering library requires
-  * The font file,
-  * The text to render,
-  * The rendering flags.
+  * The font file
+  * The text to render
+  * The rendering flags
+
+* Fuzzing a database library may require
+  * The query text
+  * The database state
 
 TODO: more examples?
 
@@ -120,9 +124,9 @@ TODO
 A custom [Type-lenth-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
 may sound like a good solution. However, we typically **do not recommend using a custom TLV**
 to split your fuzzer-generated input for the following reasons:
-* This is more test-only code for you to maintain, and easy to get wrong.
+* This is more test-only code for you to maintain, and easy to get wrong
 * Typical mutations performed by fuzzing engines, such as inserting a byte,
-  will break the TLV structure too often, making fuzzing less efficient.
+  will break the TLV structure too often, making fuzzing less efficient
 
 ## Protobufs
 
