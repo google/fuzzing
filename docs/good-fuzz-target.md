@@ -100,12 +100,12 @@ the fuzz target may be non-deterministic.
 It may not be possible in every case
 (strictly speaking, even calling `malloc()` modifies a global state).
 
-# Timeouts, OOMs, shallo bugs
+# Timeouts, OOMs, shallow bugs
 
 A good fuzz target should not have any
-timeouts (inputs that take too long to process),
-OOMs(input that cause the fuzz target to consume too much RAM),
-or shallow (easily discoverable) bugs.
+* timeouts (inputs that take too long to process),
+* OOMs (input that cause the fuzz target to consume too much RAM),
+* shallow (easily discoverable) bugs.
 Otherwise fuzzing will stall quickly.
 
 # Seed corpus
@@ -119,7 +119,8 @@ block coverage or edge coverage, depending on a specific case).
 Avoid large seed inputs when smaller inputs are sufficient for providing the
 same coverage.
 
-A seed corpus is stored as a directory where every individual file represents one input.
+A seed corpus is stored as a directory where every individual file represents one input,
+subdirectories are allowed.
 
 When fixing a bug or adding a new functionality to the API, don't forget to
 extend the seed corpus. Monitor the code coverage achieved by the corpus and try
@@ -178,7 +179,7 @@ keywords might be beneficial.
 In future we expect the fuzzing engines to become smarter and stop relying on
 dictionaries, but today dictionaries are often very practical.
 
-# IO
+# I/O
 
 A good fuzz target does not use I/O:
 * Avoid debug output to `stderr` or `stdout` as it slows down fuzzing.
@@ -216,7 +217,7 @@ the API. However, having a fuzz target for the full API is sometimes also
 useful.
 
 Any API with more than 20000-30000 reachable control flow edges should probably
-considered large.
+be considered large.
 
 Example: TODO add links to the pdfium fuzz target and sub targets.
 
