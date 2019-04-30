@@ -70,7 +70,8 @@ the fuzz target may compute a hash function on the full input and use it as the 
 This option is very easy to implement, but it's applicability is limited to
 relatively simple cases. The major problem is that a small local mutation of the input
 leads to a large change in the sub-input, which often makes fuzzing less
-efficient.
+efficient. Try this approach if the flags are individual bits and the input
+type allows some bit flips in the inputs (e.g. a plain text).
 
 TODO: example.
 
@@ -87,7 +88,7 @@ it is possible to treat the first (or last) `K` bytes of the input as sub-input,
 and the rest of the bytes as the main input.
 
 Just remember to copy the main input into a separate heap buffer of `Size - K`
-bytes, so that a buffer under/overflows on the main input are detected.
+bytes, so that buffer under/overflows on the main input are detected.
 
 TODO: example.
 
@@ -97,7 +98,7 @@ Choose a 4-byte (or 8-byte) magic constant that will serve as a separator
 between the inputs.
 In the fuzz target, split the input using this separator. Use `memmem` to
 find the separator in the input -- `memmem` is known to be friendly to fuzzing
-engines, at least to libFuzzer).
+engines, at least to libFuzzer.
 
 Example (see full code [here](https://github.com/llvm-mirror/compiler-rt/blob/master/test/fuzzer/MagicSeparatorTest.cpp)):
 ```cpp
@@ -128,6 +129,9 @@ to split your fuzzer-generated input for the following reasons:
 * This is more test-only code for you to maintain, and easy to get wrong
 * Typical mutations performed by fuzzing engines, such as inserting a byte,
   will break the TLV structure too often, making fuzzing less efficient
+
+However, a TLV input combined with a custom mutator might be a good option.
+See [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md).
 
 ## Protobufs
 
