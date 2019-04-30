@@ -27,11 +27,11 @@ very often. Some examples:
 
 TODO: more examples?
 
-# Common vs Custom Data Format
+# Common Data Format
 
 When trying to split the fuzzer-generated input into several,
 the first question one needs to ask is whether the input format is common,
-i.e. is it used or processed by other libraries, API, of fuzz targets.
+i.e. is it used or processed by other libraries, APIs, of fuzz targets.
 
 If the data format is common (e.g. a widely used media format or network packet
 format) then it is highly desirable for a fuzz target to consume exactly this
@@ -39,10 +39,17 @@ data format, and not some custom modification.
 This way it will be easier to procure a seed corpus for this fuzz target
 and to use the generated corpus to test/fuzz other targets.
 
-# Embedding / Comments
+## Multiple options
+If the data format may be processed by a fuzz target in a small number of different ways,
+it is often the best approach to split the fuzz target into several ones,
+each processing the input in exactly one way.
 
-When a fuzz target for a common data format requires some flags, options, or an
-additional auxiliary sub-input, it is sometimes possible to embed the extra input
+Make sure to cross-pollinate the corpora between these targets.
+OSS-Fuzz does that automatically.
+
+## Embedding / Comments
+When a fuzz target for a common data format requires some flags, options, or
+additional auxiliary sub-input(s), it is sometimes possible to embed the extra input
 inside a custom section or a comment of the main data format.
 
 Examples:
@@ -52,7 +59,7 @@ Examples:
   C/C++/Java/JavaScript inputs one may hide a sub-input in a single-line `//` comment. TODO: example?
 
 
-# Hash
+## Hash
 When only one small fixed-size sub-input is required (such as flags / options),
 the fuzz target may compute a hash function on the full input and use it as the flag bits.
 This option is very easy to implement, but it's applicability is limited to
@@ -61,7 +68,6 @@ leads to a large change in the sub-input, which often makes fuzzing less
 efficient.
 
 TODO: example.
-
 
 # Custom Serialization Format
 
