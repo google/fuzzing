@@ -58,9 +58,10 @@ inside a custom section or a comment of the main data format.
 
 Examples:
 * PNG allows custom "chunks", and so a fuzz target for a PNG decoder can
-  hide flags in a separate PNG chunk, e.g. `fUZz` ([example](https://github.com/google/oss-fuzz/blob/master/projects/libpng-proto/libpng_transforms_fuzzer.cc)).
-* Programming languages allow single-line comments, e.g. when fuzzing
-  C/C++/Java/JavaScript inputs one may hide a sub-input in a single-line `//` comment. TODO: example?
+  hide the flags used during PNG processing 
+  in a separate PNG chunk, e.g. `fUZz`
+  ([example](https://github.com/google/oss-fuzz/blob/master/projects/libpng-proto/libpng_transforms_fuzzer.cc)).
+* When fuzzing C/C++/Java/JavaScript inputs one may hide a sub-input in a single-line `//` comment. TODO: example?
 
 
 ## Hash
