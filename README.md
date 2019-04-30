@@ -2,7 +2,12 @@
 
 This project aims at hosting documentation, tutorials, examples, discussions, research proposals, and other resources related to [fuzzing](https://en.wikipedia.org/wiki/Fuzzing).
 
-This is work in progress, stay tuned.
+This is work in progress, stay tuned. External contributions are welcome, please
+see [CONTRIBUTING](CONTRIBUTING) file for more info.
+
+# Overviews
+
+* [AFL-based fuzzers](AFL_based_fuzzers_overview.md)
 
 # Related projects
 
