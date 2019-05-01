@@ -229,7 +229,8 @@ it may still slow down fuzzing.
 
 # Splitting Inputs
 
-TODO: large topic, will send as a separate PR
+It is often desirable to split the input into two or more independent parts (sub-inputs).
+See [split-inputs](./split-inputs.md) for recommended options.
 
 # Structure-Aware Fuzzing
 
