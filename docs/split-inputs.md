@@ -1,11 +1,11 @@
 # How To Split A Fuzzer-Generated Input Into Several
 
 This document describes several recommended strategies for splitting
-a single fuzzer-generated input into several.
+a single fuzzer-generated input into several parts (sub-inputs).
 
 # Examples
-Splitting a fuzzer-generated input into several independent inputs is required
-very often. Some examples:
+Splitting a fuzzer-generated input into several independent
+parts (sub-inputs) is required very often. Some examples:
 
 * Fuzzing a regular expression library requires
    * The regular expression (RE)
@@ -33,7 +33,7 @@ TODO: more examples?
 
 # Common Data Format
 
-When trying to split the fuzzer-generated input into several,
+When trying to split the fuzzer-generated input into several parts,
 the first question one needs to ask is whether the input format is common,
 i.e. is it used or processed by other libraries, APIs, of fuzz targets.
 
@@ -43,7 +43,7 @@ data format, and not some custom modification.
 This way it will be easier to procure a seed corpus for this fuzz target
 and to use the generated corpus to test/fuzz other targets.
 
-## Multiple options
+## Multiple Options
 If the data format may be processed by a fuzz target in a small number of different ways,
 it is often the best approach to split the fuzz target into several ones,
 each processing the input in exactly one way.
@@ -100,7 +100,7 @@ In the fuzz target, split the input using this separator. Use `memmem` to
 find the separator in the input -- `memmem` is known to be friendly to fuzzing
 engines, at least to libFuzzer.
 
-Example (see full code [here](https://github.com/llvm-mirror/compiler-rt/blob/master/test/fuzzer/MagicSeparatorTest.cpp)):
+Example (see full code [here](https://github.com/llvm-mirror/compiler-rt/blob/6cd423889971c0d97801a9f3b9b5afb91ae9c137/test/fuzzer/MagicSeparatorTest.cpp)):
 ```cpp
 // Splits [data,data+size) into a vector of strings using a "magic" Separator.
 std::vector<std::vector<uint8_t>> SplitInput(const uint8_t *Data, size_t Size,
