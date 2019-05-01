@@ -48,7 +48,8 @@ If the data format may be processed by a fuzz target in a small number of differ
 it is often the best approach to split the fuzz target into several ones,
 each processing the input in exactly one way.
 
-Make sure to cross-pollinate the corpora between these targets.
+Make sure to [cross-pollinate](https://github.com/google/oss-fuzz/blob/master/docs/glossary.md#cross-pollination)
+the corpora between these targets.
 OSS-Fuzz does that automatically.
 
 ## Embedding / Comments
