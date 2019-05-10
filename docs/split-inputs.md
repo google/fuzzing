@@ -123,8 +123,8 @@ of separators.
 
 TODO
 
-## Type-lenth-value
-A custom [Type-lenth-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
+## Type-length-value
+A custom [Type-length-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
 may sound like a good solution. However, we typically **do not recommend using a custom TLV**
 to split your fuzzer-generated input for the following reasons:
 * This is more test-only code for you to maintain, and easy to get wrong
