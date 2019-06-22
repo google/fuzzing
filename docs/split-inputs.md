@@ -119,9 +119,21 @@ It is relatively easy for a modern fuzzing engine to discover the separator,
 but nevertheless we recommend to provide several seed inputs with the desired number
 of separators.
 
-## Fuzz Data Provider
+## Fuzzed Data Provider
 
-TODO
+[FuzzedDataProvider] is a single-header library that is helpful for splitting
+fuzz inputs into multiple parts of various type. Both advantage and disadvantage
+of using this library is that the input splitting happens dynamically, i.e. you
+don't need to define any structure of the input. This might be very helpful in
+certain cases, but would typically make the corpus unreadable.
+
+[FuzzedDataProvider] is a class whose constructor accepts `const uint8_t,
+size_t` arguments. The available methods are documented in detail in the source
+code, below is a quick overview of the most common use cases.
+
+
+
+[FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
 
 ## Type-length-value
 A custom [Type-length-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
