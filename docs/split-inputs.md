@@ -139,11 +139,11 @@ size_t` arguments. Below is a quick overview of the available methods.
   fuzz input.
 * `ConsumeEnum` and `PickValueInArray` methods are typically applied for the
   same purpose as the methods above, but are handy when the fuzz input needs to
-  be selected from a predefined set of values, such as a enum or an array.
+  be selected from a predefined set of values, such as an enum or an array.
 
 These methods are using the last bytes of the fuzz input for deriving the
 requested values. This allows to use valid / test files as a seed corpus in
-vast majority of the use cases.
+the vast majority of use cases.
 
 ### Methods for extracting sequences of bytes
 
@@ -162,7 +162,7 @@ vast majority of the use cases.
 
 For more information about the methods, their arguments and implementation
 details, please refer to the [FuzzedDataProvider] source code. Every method has
-a detailed comment in that file, and the implementation is relativaly small.
+a detailed comment in that file, and the implementation is relatively small.
 
 ### Examples of fuzz targets using `FuzzedDataProvider`
 
@@ -172,13 +172,13 @@ a detailed comment in that file, and the implementation is relativaly small.
 * [net_crl_set_fuzzer] initialized multiple parameters and uses the rest of the
   fuzz input for the main argument (i.e. data to be parsed / processed). Note
   that using [Protobufs](#Protobufs) based fuzzing might be more efficient for
-  such target.
+  such a target.
 * [net_parse_cookie_line_fuzzer] is a slightly more sophisticated fuzz target
   that emulates different actions with different parameters initialized with the
   fuzz input.
 
 [FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
-# TODO(Dor1s): update these links before merginng!
+# TODO(Dor1s): update these links before merging!
 [net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc
 [net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc
 [net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc
