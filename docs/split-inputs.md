@@ -121,19 +121,68 @@ of separators.
 
 ## Fuzzed Data Provider
 
-[FuzzedDataProvider] is a single-header library that is helpful for splitting
-fuzz inputs into multiple parts of various type. Both advantage and disadvantage
-of using this library is that the input splitting happens dynamically, i.e. you
-don't need to define any structure of the input. This might be very helpful in
-certain cases, but would typically make the corpus unreadable.
+[FuzzedDataProvider] is a single-header C++ library that is helpful for
+splitting a fuzz input into multiple parts of various types. Both advantage and
+disadvantage of using this library is that the input splitting happens
+dynamically, i.e. you don't need to define any structure of the input. This
+might be very helpful in certain cases, but could also make the corpus human
+unreadable.
 
 [FuzzedDataProvider] is a class whose constructor accepts `const uint8_t,
-size_t` arguments. The available methods are documented in detail in the source
-code, below is a quick overview of the most common use cases.
+size_t` arguments. Below is a quick overview of the available methods.
 
+### Methods for extracting individual values
 
+* `ConsumeBool`, `ConsumeIntegral`, `ConsumeIntegralInRange` methods are helpful
+  for extracting a single boolean or integer value, e.g. some flag for the
+  target API, or a number of iterations for a loop, or length of a part of the
+  fuzz input.
+* `ConsumeEnum` and `PickValueInArray` methods are typically applied for the
+  same purpose as the methods above, but are handy when the fuzz input needs to
+  be selected from a predefined set of values, such as a enum or an array.
+
+These methods are using the last bytes of the fuzz input for deriving the
+requested values. This allows to use valid / test files as a seed corpus in
+vast majority of the use cases.
+
+### Methods for extracting sequences of bytes
+
+* `ConsumeBytes` and `ConsumeBytesWithTerminator` methods return a `std::vector`
+  of the requested size. These methods are helpful when you know how long a
+  certain part of the fuzz input should be.
+* `ConsumeBytesAsString` method returns a `std::string` of the requested length.
+  This is useful when you need a null-terminated C-string. Calling `c_str()` on
+  the resulting object is the best way to obtain it.
+* `ConsumeRandomLengthString` method returns a `std::string` as well, but its
+  length is derived from the fuzz input and typically is hard to predict, though
+  always deterministic. The caller must provide the max length argument.
+* `ConsumeRemainingBytes` and `ConsumeRemainingBytesAsString` methods return
+  `std::vector` and `std::string` objects respectively, initialized with all the
+  bytes from the fuzz input that left unused.
+
+For more information about the methods, their arguments and implementation
+details, please refer to the [FuzzedDataProvider] source code. Every method has
+a detailed comment in that file, and the implementation is relativaly small.
+
+### Examples of fuzz targets using `FuzzedDataProvider`
+
+* [net_verify_name_match_fuzzer] splits the fuzz input into two parts.
+* [net_http2_frame_decoder_fuzzer] reads data in small chunks in a loop in order
+  to emulate a sequence of frames coming from the network connection.
+* [net_crl_set_fuzzer] initialized multiple parameters and uses the rest of the
+  fuzz input for the main argument (i.e. data to be parsed / processed). Note
+  that using [Protobufs](#Protobufs) based fuzzing might be more efficient for
+  such target.
+* [net_parse_cookie_line_fuzzer] is a slightly more sophisticated fuzz target
+  that emulates different actions with different parameters initialized with the
+  fuzz input.
 
 [FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
+# TODO(Dor1s): update these links before merginng!
+[net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc
+[net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc
+[net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc
+[net_verify_name_match_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/internal/verify_name_match_fuzzer.cc
 
 ## Type-length-value
 A custom [Type-length-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
