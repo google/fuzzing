@@ -125,25 +125,27 @@ of separators.
 splitting a fuzz input into multiple parts of various types. Both advantage and
 disadvantage of using this library is that the input splitting happens
 dynamically, i.e. you don't need to define any structure of the input. This
-might be very helpful in certain cases, but could also make the corpus human
-unreadable.
+might be very helpful in certain cases, but would also make the corpus to be no
+longer in a particular format. For example, if you fuzz an image parser and
+split the fuzz input into several parts, the corpus elements will no longer be
+valid image files.
 
-[FuzzedDataProvider] is a class whose constructor accepts `const uint8_t,
+[FuzzedDataProvider] is a class whose constructor accepts `const uint8_t*,
 size_t` arguments. Below is a quick overview of the available methods.
 
 ### Methods for extracting individual values
 
 * `ConsumeBool`, `ConsumeIntegral`, `ConsumeIntegralInRange` methods are helpful
-  for extracting a single boolean or integer value, e.g. some flag for the
-  target API, or a number of iterations for a loop, or length of a part of the
-  fuzz input.
+  for extracting a single boolean or integer value (the exact type is defined by
+  a template parameter), e.g. some flag for the target API, or a number of
+  iterations for a loop, or length of a part of the fuzz input.
 * `ConsumeEnum` and `PickValueInArray` methods are typically applied for the
   same purpose as the methods above, but are handy when the fuzz input needs to
   be selected from a predefined set of values, such as an enum or an array.
 
 These methods are using the last bytes of the fuzz input for deriving the
-requested values. This allows to use valid / test files as a seed corpus in
-the vast majority of use cases.
+requested values. This allows to use valid / test files as a seed corpus in some
+cases.
 
 ### Methods for extracting sequences of bytes
 
@@ -179,10 +181,10 @@ a detailed comment in that file, and the implementation is relatively small.
 
 [FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
 # TODO(Dor1s): update these links before merging!
-[net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc
-[net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc
-[net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc
-[net_verify_name_match_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/internal/verify_name_match_fuzzer.cc
+[net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
+[net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
+[net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
+[net_verify_name_match_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/internal/verify_name_match_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 
 ## Type-length-value
 A custom [Type-length-value](https://en.wikipedia.org/wiki/Type-length-value), or TLV,
