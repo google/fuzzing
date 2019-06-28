@@ -180,7 +180,6 @@ a detailed comment in that file, and the implementation is relatively small.
   fuzz input.
 
 [FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
-# TODO(Dor1s): update these links before merging!
 [net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
