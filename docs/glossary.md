@@ -20,9 +20,6 @@ Examples: [openssl](https://github.com/openssl/openssl/blob/master/fuzz/x509.c),
 [re2](https://github.com/google/re2/blob/master/re2/fuzzing/re2_fuzzer.cc),
 [SQLite](https://www.sqlite.org/src/artifact/ad79e867fb504338).
 
-A fuzz target can be used to [reproduce bug reports](reproducing.md). 
-It is recommended to use it for regression testing as well (see [ideal integration](ideal_integration.md)).
-
 ## Fuzzer
 
 The most overloaded term and used in a variety of contexts, which makes it bad.
