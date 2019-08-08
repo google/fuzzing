@@ -139,9 +139,12 @@ size_t` arguments. Below is a quick overview of the available methods.
   for extracting a single boolean or integer value (the exact type is defined by
   a template parameter), e.g. some flag for the target API, or a number of
   iterations for a loop, or length of a part of the fuzz input.
-* `ConsumeEnum` and `PickValueInArray` methods are typically applied for the
-  same purpose as the methods above, but are handy when the fuzz input needs to
-  be selected from a predefined set of values, such as an enum or an array.
+* `ConsumeProbability`, `ConsumeFloatingPoint`, `ConsumeFloatingPointInRange`
+  methods are very similar to the ones mentioned above. The difference is that
+  these methods return a floating point value.
+* `ConsumeEnum` and `PickValueInArray` methods are handy when the fuzz input
+  needs to be selected from a predefined set of values, such as an enum or an
+  array.
 
 These methods are using the last bytes of the fuzz input for deriving the
 requested values. This allows to use valid / test files as a seed corpus in some
