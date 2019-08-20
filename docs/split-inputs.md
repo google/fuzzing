@@ -126,7 +126,7 @@ splitting a fuzz input into multiple parts of various types. It is a part of
 LLVM and can be included via `#include <fuzzer/FuzzedDataProvider.h>` directive.
 If your compiler doesn't have this header (in case it's an older Clang version
 or some other compiler), you can copy the header from [here] and add it to your
-project manually. It should just work, as the header doesn't depends on LLVM.
+project manually. It should just work, as the header doesn't depend on LLVM.
 
 Both advantage and disadvantage of using this library is that the input
 splitting happens dynamically, i.e. you don't need to define any structure of
