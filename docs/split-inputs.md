@@ -122,13 +122,19 @@ of separators.
 ## Fuzzed Data Provider
 
 [FuzzedDataProvider] is a single-header C++ library that is helpful for
-splitting a fuzz input into multiple parts of various types. Both advantage and
-disadvantage of using this library is that the input splitting happens
-dynamically, i.e. you don't need to define any structure of the input. This
-might be very helpful in certain cases, but would also make the corpus to be no
-longer in a particular format. For example, if you fuzz an image parser and
-split the fuzz input into several parts, the corpus elements will no longer be
-valid image files.
+splitting a fuzz input into multiple parts of various types. It is a part of
+LLVM and can be included via `#include <fuzzer/FuzzedDataProvider.h>` directive.
+If your compiler doesn't have this header (in case it's an older Clang version
+or some other compiler), you can copy the header from [here] and add it to your
+project manually. It should just work, as the header doesn't depend on LLVM.
+
+An advantage and disadvantage of using this library is that the input splitting
+happens dynamically, i.e. you don't need to define any structure of the input.
+This might be very helpful in certain cases, but would also make the corpus to
+be no longer in a particular format. For example, if you fuzz an image parser
+and split the fuzz input into several parts, the corpus elements will no longer
+be valid image files, and you won't be able to simply add image files to your
+corpus.
 
 [FuzzedDataProvider] is a class whose constructor accepts `const uint8_t*,
 size_t` arguments. Below is a quick overview of the available methods.
@@ -182,7 +188,8 @@ a detailed comment in that file, and the implementation is relatively small.
   that emulates different actions with different parameters initialized with the
   fuzz input.
 
-[FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/lib/fuzzer/utils/FuzzedDataProvider.h
+[FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/include/fuzzer/FuzzedDataProvider.h
+[here]: https://raw.githubusercontent.com/llvm/llvm-project/master/compiler-rt/include/fuzzer/FuzzedDataProvider.h
 [net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
