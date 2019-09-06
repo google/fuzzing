@@ -158,6 +158,9 @@ cases.
 
 ### Methods for extracting sequences of bytes
 
+Many of these methods have a length argument. You can always know how many bytes
+are left inside the provider object by calling `remaining_bytes()` method on it.
+
 * `ConsumeBytes` and `ConsumeBytesWithTerminator` methods return a `std::vector`
   of the requested size. These methods are helpful when you know how long a
   certain part of the fuzz input should be.
