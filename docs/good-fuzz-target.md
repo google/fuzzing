@@ -237,8 +237,7 @@ See [split-inputs](./split-inputs.md) for recommended options.
 In many cases the API under test consumes highly structured inputs,
 e.g. compressed, encrypted, checksum-protected, serialization formats,
 database query languages, programming languages, etc.
-Consider [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md)
-for such targets.
+Consider [Structure-Aware Fuzzing](structure-aware-fuzzing.md) for such targets.
 
 # Related materials
 * [LLVM libFuzzer](https://llvm.org/docs/LibFuzzer.html)
