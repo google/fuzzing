@@ -207,10 +207,10 @@ to split your fuzzer-generated input for the following reasons:
   will break the TLV structure too often, making fuzzing less efficient
 
 However, a TLV input combined with a custom mutator might be a good option.
-See [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md).
+See [Structure-Aware Fuzzing](structure-aware-fuzzing.md).
 
 ## Protobufs
 
 Yet another option is to use one of the general-purpose serialization formats,
 such as Protobufs, in combination with a custom mutator.
-See [Structure-Aware Fuzzing](https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md).
+See [Structure-Aware Fuzzing](structure-aware-fuzzing.md).
