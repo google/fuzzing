@@ -32,14 +32,14 @@ git clone https://github.com/google/fuzzing.git fuzzing
 # Get fuzzer-test-suite
 git clone https://github.com/google/fuzzer-test-suite.git FTS
 
-./fuzzing/tutorial/install-deps.sh  # Get deps
-./fuzzing/tutorial/install-clang.sh # Get fresh clang binaries
+./fuzzing/tutorial/libFuzzer/install-deps.sh  # Get deps
+./fuzzing/tutorial/libFuzzer/install-clang.sh # Get fresh clang binaries
 ```
 
 ## Verify the setup
 Run:
 ```shell
-clang++ -g -fsanitize=address,fuzzer fuzzing/tutorial/fuzz_me.cc
+clang++ -g -fsanitize=address,fuzzer fuzzing/tutorial/libFuzzer/fuzz_me.cc
 ./a.out 2>&1 | grep ERROR
 ```
 and make sure you see something like
@@ -57,7 +57,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 }
 ```
 
-Take a look at an example of such **fuzz target**: [./fuzz_me.cc](fuzz_me.cc). Can you see the bug?
+Take a look at an example of such **fuzz target**: [./fuzz_me.cc](libFuzzer/fuzz_me.cc). Can you see the bug?
 
 To build a fuzzer binary for this target you need to compile the source using the recent Clang compiler 
 with the following extra flags:
@@ -68,7 +68,7 @@ with the following extra flags:
 
 For example:
 ```shell
-clang++ -g -fsanitize=address,fuzzer fuzzing/tutorial/fuzz_me.cc
+clang++ -g -fsanitize=address,fuzzer fuzzing/tutorial/libFuzzer/fuzz_me.cc
 ```
 Now try running it:
 ```
@@ -90,8 +90,8 @@ INFO: A corpus is not provided, starting from an empty corpus
 =================================================================
 ==2335==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000155c13 at pc 0x0000004ee637...
 READ of size 1 at 0x602000155c13 thread T0
-    #0 0x4ee636 in FuzzMe(unsigned char const*, unsigned long) fuzzing/tutorial/fuzz_me.cc:10:7
-    #1 0x4ee6aa in LLVMFuzzerTestOneInput fuzzing/tutorial/fuzz_me.cc:14:3
+    #0 0x4ee636 in FuzzMe(unsigned char const*, unsigned long) fuzzing/tutorial/libFuzzer/fuzz_me.cc:10:7
+    #1 0x4ee6aa in LLVMFuzzerTestOneInput fuzzing/tutorial/libFuzzer/fuzz_me.cc:14:3
 ...
 artifact_prefix='./'; Test unit written to ./crash-0eb8e4ed029b774d80f2b66408203801cb982a60
 ...
@@ -129,8 +129,8 @@ You may think of coverage points as of
 ```
 ==2335==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000155c13 at pc 0x0000004ee637...
 READ of size 1 at 0x602000155c13 thread T0
-    #0 0x4ee636 in FuzzMe(unsigned char const*, unsigned long) fuzzing/tutorial/fuzz_me.cc:10:7
-    #1 0x4ee6aa in LLVMFuzzerTestOneInput fuzzing/tutorial/fuzz_me.cc:14:3
+    #0 0x4ee636 in FuzzMe(unsigned char const*, unsigned long) fuzzing/tutorial/libFuzzer/fuzz_me.cc:10:7
+    #1 0x4ee6aa in LLVMFuzzerTestOneInput fuzzing/tutorial/libFuzzer/fuzz_me.cc:14:3
 ```
 On one of the inputs AddressSanitizer has detected a `heap-buffer-overflow` bug and aborted the execution. 
 
@@ -427,7 +427,7 @@ We recommend [Clang Coverage](http://clang.llvm.org/docs/SourceBasedCodeCoverage
 ```
 # Build you code for Clang Coverage; link it against a standalone driver for running fuzz targets.
 svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib/fuzzer Fuzzer
-clang -fprofile-instr-generate -fcoverage-mapping ~/fuzzing/tutorial/fuzz_me.cc \
+clang -fprofile-instr-generate -fcoverage-mapping ~/fuzzing/tutorial/libFuzzer/fuzz_me.cc \
                                                   ~/Fuzzer/standalone/StandaloneFuzzTargetMain.c
 mkdir CORPUS # Create an empty corpus dir.
 ```
@@ -436,23 +436,23 @@ echo -n A > CORPUS/A && ./a.out CORPUS/* && \
              llvm-profdata merge -sparse *.profraw -o default.profdata && \
              llvm-cov show a.out -instr-profile=default.profdata -name=FuzzMe
 ```
-![cov1](cov1.png)
+![cov1](libFuzzer/cov1.png)
 ```
 echo -n AAA > CORPUS/AAA && ./a.out CORPUS/* && ... 
 ```
-![cov2](cov2.png)
+![cov2](libFuzzer/cov2.png)
 ```
 echo -n FAA > CORPUS/FAA && ./a.out CORPUS/* && ... 
 ```
-![cov3](cov3.png)
+![cov3](libFuzzer/cov3.png)
 ```
 echo -n FUA > CORPUS/FUA && ./a.out CORPUS/* && ... 
 ```
-![cov4](cov4.png)
+![cov4](libFuzzer/cov4.png)
 ```
 echo -n FUZA > CORPUS/FUZA && ./a.out CORPUS/* && ... 
 ```
-![cov5](cov5.png)
+![cov5](libFuzzer/cov5.png)
 
 
 
