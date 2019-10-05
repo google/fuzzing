@@ -47,7 +47,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
 This is a very simple target, yet traditional universal fuzzers (including
 libFuzzer) have virtually no chance of discovering the crash.  Why?  Because
-their mutatations will operate on the compressed data, causing virtually all
+their mutations will operate on the compressed data, causing virtually all
 generated inputs to be invalid for `uncompress`.
 
 This is where **custom mutators** (a.k.a. libFuzzer plugins) come into play.
