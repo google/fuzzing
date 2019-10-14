@@ -294,7 +294,7 @@ And finally, we write our fuzz target:
 ```cpp
 DEFINE_BINARY_PROTO_FUZZER(const SQLQueries& sql_queries) {
     std::string queries = SQLQueriesToString(sql_queries);
-    sql_fuzzer::RunSQLQueries(SQLQueriesToString(queries)); // Helper that passes our queries to sqlite library to execute
+    sql_fuzzer::RunSQLQueries(queries); // Helper that passes our queries to sqlite library to execute
 }
 ```
 
