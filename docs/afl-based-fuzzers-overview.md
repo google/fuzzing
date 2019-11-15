@@ -10,7 +10,7 @@ AFL is a coverage-guided, or feedback-based, fuzzer. More about these concepts c
 
 Here's a graphic representation:
 
-![Graphic representation of AFL work](images/graphic_representation_afl.png)
+![Graphic representation of AFL work](/images/graphic_representation_afl.png)
 
 If you don't know what AFL is, here is a list of helpful resources for you to start:
 
@@ -25,7 +25,7 @@ At the moment this article was being written, the latest version of AFL was 2.52
 
 It's also worth to mention the monthly [Rode0day](https://rode0day.mit.edu/) competition – an event where fuzzers try to find the biggest number of bugs with less time than their opponents in pre-made corpora both with and without access to the source code. In its nature, Rode0day is a battle between different modifications and forks of AFL.
 
-![AFL demo](images/afl_demo.png)
+![AFL demo](/images/afl_demo.png)
 
 There are also different variations and derivates of AFL, which allows fuzzing Python, Go, Rust, OCaml, GCJ Java, kernel syscalls, or even entire VMs.
 
