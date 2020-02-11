@@ -175,7 +175,7 @@ are left inside the provider object by calling `remaining_bytes()` method on it.
   bytes from the fuzz input that left unused.
 * `ConsumeData` method copies the requested number of bytes from the fuzz input
   to the given pointer (`void *destination`). The method is useful when you need
-  to fill in an existing buffer or object (e.g. a struct) with fuzzing data.
+  to fill an existing buffer or object (e.g. a struct) with fuzzing data.
 
 For more information about the methods, their arguments and implementation
 details, please refer to the [FuzzedDataProvider] source code. Every method has
