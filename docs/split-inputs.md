@@ -121,7 +121,7 @@ of separators.
 
 ## Fuzzed Data Provider
 
-[FuzzedDataProvider] is a single-header C++ library that is helpful for
+[FuzzedDataProvider] (*FDP*) is a single-header C++ library that is helpful for
 splitting a fuzz input into multiple parts of various types. It is a part of
 LLVM and can be included via `#include <fuzzer/FuzzedDataProvider.h>` directive.
 If your compiler doesn't have this header (in case it's an older Clang version
@@ -136,8 +136,22 @@ and split the fuzz input into several parts, the corpus elements will no longer
 be valid image files, and you won't be able to simply add image files to your
 corpus.
 
-[FuzzedDataProvider] is a class whose constructor accepts `const uint8_t*,
-size_t` arguments. Below is a quick overview of the available methods.
+### Main concepts
+
+* [FuzzedDataProvider] is a class whose constructor accepts `const uint8_t*,
+  size_t` arguments. Usually, you would call it in the beginning of your
+  `LLVMFuzzerTestOneInput` and pass `data, size` provided by the fuzzing engine.
+* Once an FDP object is constructed using the fuzz input, you can consume the
+  data from the input by calling the FDP methods listed below.
+* If there is not enough data left in the buffer passed to the constructor, FDP
+  will consume all the remaining bytes.
+* If there is no data left, FDP will return the default value for the requested
+  type or an empty container when consuming a sequence of bytes.
+* If you consume data from FDP in a loop, make sure to check the value returned
+  by `remaining_bytes()` between loop iterations.
+* Do not use the methods that return `std::string` unless your API requires a
+  string object or a C-style string with a trailing null byte. This is a common
+  mistake that hides off-by-one buffer overflows from AddressSanitizer.
 
 ### Methods for extracting individual values
 
@@ -163,7 +177,8 @@ are left inside the provider object by calling `remaining_bytes()` method on it.
 
 * `ConsumeBytes` and `ConsumeBytesWithTerminator` methods return a `std::vector`
   of the requested size. These methods are helpful when you know how long a
-  certain part of the fuzz input should be.
+  certain part of the fuzz input should be. Use `.data()` and `.size()` methods
+  of the resulting object if your API works with raw memory arguments.
 * `ConsumeBytesAsString` method returns a `std::string` of the requested length.
   This is useful when you need a null-terminated C-string. Calling `c_str()` on
   the resulting object is the best way to obtain it.
