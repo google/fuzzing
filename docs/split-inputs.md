@@ -140,13 +140,15 @@ corpus.
 
 * [FuzzedDataProvider] is a class whose constructor accepts `const uint8_t*,
   size_t` arguments. Usually, you would call it in the beginning of your
-  `LLVMFuzzerTestOneInput` and pass `data, size` provided by the fuzzing engine.
+  `LLVMFuzzerTestOneInput` and pass the `data, size` parameters provided by the
+  fuzzing engine.
 * Once an FDP object is constructed using the fuzz input, you can consume the
   data from the input by calling the FDP methods listed below.
-* If there is not enough data left in the buffer passed to the constructor, FDP
-  will consume all the remaining bytes.
+* If there is not enough data left to consume, FDP will consume all the
+  remaining bytes. For example, if you call `ConsumeBytes(10)` when there are
+  only `4` bytes left in the fuzz input, FDP will return a vector of length `4`.
 * If there is no data left, FDP will return the default value for the requested
-  type or an empty container when consuming a sequence of bytes.
+  type or an empty container (when consuming a sequence of bytes).
 * If you consume data from FDP in a loop, make sure to check the value returned
   by `remaining_bytes()` between loop iterations.
 * Do not use the methods that return `std::string` unless your API requires a
