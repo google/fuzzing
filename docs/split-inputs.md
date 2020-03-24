@@ -186,7 +186,7 @@ are left inside the provider object by calling `remaining_bytes()` method on it.
   the resulting object is the best way to obtain it.
 * `ConsumeRandomLengthString` method returns a `std::string` as well, but its
   length is derived from the fuzz input and typically is hard to predict, though
-  always deterministic. The caller must provide the max length argument.
+  always deterministic. The caller can provide the max length argument.
 * `ConsumeRemainingBytes` and `ConsumeRemainingBytesAsString` methods return
   `std::vector` and `std::string` objects respectively, initialized with all the
   bytes from the fuzz input that left unused.
