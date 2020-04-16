@@ -1,0 +1,29 @@
+# https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+
+# scheme
+"http"
+"gopher"
+"ftp"
+"mailto"
+"file"
+"data"
+"news"
+"nntp"
+"telnet"
+"wais"
+"prospero"
+"tel:+"
+"javascript:"
+
+# encoded characters
+"%2f"
+"%40"
+"%26"
+
+# misc
+"://"
+"//"
+"\\"
+"../"
+";type=a"
+"xn--"
