@@ -377,7 +377,7 @@ mkdir CORPUS
 ./pcre2-10.00-fsanitize_fuzzer -jobs=1000 -workers=8 CORPUS
 ```
 
-After a minute or two look for the erros in the log files:
+After a minute or two look for the errors in the log files:
 ```shell
 grep ERROR *.log | sort -k 3
 ```
