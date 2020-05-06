@@ -27,7 +27,7 @@ Sometimes, "Fuzzer" is referred to a [fuzz target](#fuzz-target),
 a [fuzzing engine](#fuzzing-engine),
 a [mutation engine](#mutation-engine),
 a [test generator](#test-generator) or 
-a [fuzzer build](#job-type).
+a [fuzzer build](#fuzzer-build).
 
 ## Fuzzing Engine
 
@@ -58,6 +58,10 @@ A tool that generates testcases from scratch according to some rules or grammar.
 Examples: 
 [csmith](https://embed.cs.utah.edu/csmith/) (a test generator for C language),
 [cross_fuzz](http://lcamtuf.coredump.cx/cross_fuzz/) (a cross-document DOM binding test generator).
+
+## Fuzzer Build
+A build that contains all the fuzz targets for a given project, which is run with a specific fuzzing engine, in a specific build mode (e.g. with enabled/disabled assertions), and optionally combined with a sanitizer.
+In [OSS-Fuzz](https://google.github.io/oss-fuzz/), it is also known as a [job type](https://google.github.io/oss-fuzz/reference/glossary/#job-type).
 
 ## Test Input
 A sequence of bytes that is used as input to a [fuzz target](#fuzz-target). 
