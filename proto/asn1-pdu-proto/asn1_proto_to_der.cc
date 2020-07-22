@@ -76,7 +76,7 @@ void ASN1ProtoToDER::EncodeLength(const Length& len,
 
 void ASN1ProtoToDER::EncodeValue(const Value& val) {
   for (const auto& val_ele : val.val_array()) {
-    if(!kErrRecursionLimitReached) {
+    if (!kErrRecursionLimitReached) {
       if (val_ele.has_pdu()) {
         EncodePDU(val_ele.pdu());
       } else {
@@ -142,10 +142,14 @@ void ASN1ProtoToDER::EncodePDU(const PDU& pdu) {
 }
 
 std::vector<uint8_t> ASN1ProtoToDER::ProtoToDER(const PDU& pdu) {
+  // The same instantiaton of ANS1ProtoToDER can encode multiple PDU's.
+  // The following three instructions are used to reset the values
+  // before each PDU is encoded.
   encoder_.clear();
   depth_ = 0;
+  kErrRecursionLimitReached = false;
   EncodePDU(pdu);
-  if(kErrRecursionLimitReached) {
+  if (kErrRecursionLimitReached) {
     encoder_.clear();
   }
   return encoder_;
