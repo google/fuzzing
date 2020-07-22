@@ -1,6 +1,6 @@
 #include "asn1_proto_to_der.h"
 
-namespace asn1_proto {
+namespace asn1_pdu {
 
 // The maximum level of recursion allowed. Values greater than this will just
 // fail.
@@ -151,4 +151,4 @@ std::vector<uint8_t> ASN1ProtoToDER::ProtoToDER(const PDU& pdu) {
   return encoder_;
 }
 
-}  // namespace asn1_proto
+}  // namespace asn1_pdu

@@ -9,7 +9,7 @@
 #include <vector>
 #include "asn1.pb.h"
 
-namespace asn1_proto {
+namespace asn1_pdu {
 
 class ASN1ProtoToDER {
  public:
@@ -69,6 +69,6 @@ class ASN1ProtoToDER {
   size_t depth_;
 };
 
-}  // namespace asn1_proto
+}  // namespace asn1_pdu
 
 #endif
