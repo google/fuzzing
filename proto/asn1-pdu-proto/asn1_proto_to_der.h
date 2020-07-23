@@ -21,7 +21,7 @@ class ASN1ProtoToDER {
   std::vector<uint8_t> encoder_;
 
   // Enocdes |pdu| to DER, returning the number of bytes used to encode |pdu|.
-  size_t EncodePDU(const PDU& pdu);
+  void EncodePDU(const PDU& pdu);
 
   // Encodes |id| to DER according to X.690 (2015), 8.1.2.
   // Returns number of bytes used to encode |id|.
