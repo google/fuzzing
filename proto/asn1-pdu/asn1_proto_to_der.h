@@ -1,12 +1,11 @@
 #ifndef ASN1_PROTO_TO_DER_H_
 #define ASN1_PROTO_TO_DER_H_
 
-#include <cmath>
-#include <iostream>
-#include <sstream>
+#include <stdint.h>
+
 #include <string>
-#include <typeinfo>
 #include <vector>
+
 #include "asn1_pdu.pb.h"
 
 namespace asn1_pdu {
@@ -43,7 +42,7 @@ class ASN1ProtoToDER {
   void EncodeLength(const Length& len, size_t actual_len, size_t len_pos);
 
   // Writes |raw_len| to |encoder_| at |len_pos|.
-  void EncodeOverrideLength(const std::string raw_len, const size_t len_pos);
+  void EncodeOverrideLength(const std::string& raw_len, const size_t len_pos);
 
   // Encodes the indefinite-length indicator (X.690 (2015), 8.1.3.6) at
   // |len_pos|, and appends an End-of-Contents (EOC) marker at the end of
