@@ -13,9 +13,9 @@ static bool kErrRecursionLimitReached = false;
 uint8_t ASN1ProtoToDER::GetVariableIntLen(const uint64_t value,
                                           const size_t base) {
   uint8_t base_bits = log2(base);
-  for (uint8_t num_bits = (sizeof(value) - 1) * 8; num_bits >= base_bits;
-       num_bits -= base_bits) {
-    if ((value >> num_bits)) {
+  for (uint8_t num_bits = (sizeof(value) - 1) * __CHAR_BIT__;
+       num_bits >= base_bits; num_bits -= base_bits) {
+    if (value >> num_bits) {
       return ceil((double)num_bits / base_bits) + 1;
     }
   }
@@ -26,13 +26,13 @@ uint8_t ASN1ProtoToDER::GetVariableIntLen(const uint64_t value,
 void ASN1ProtoToDER::InsertVariableInt(const size_t value, const size_t pos) {
   std::vector<uint8_t> variable_int;
   for (uint8_t shift = GetVariableIntLen(value, 256); shift != 0; --shift) {
-    variable_int.push_back((value >> ((shift - 1) * 8)) & 0xFF);
+    variable_int.push_back((value >> ((shift - 1) __CHAR_BIT__)) & 0xFF);
   }
   encoder_.insert(encoder_.begin() + pos, variable_int.begin(),
                   variable_int.end());
 }
 
-void ASN1ProtoToDER::EncodeOverrideLength(const std::string raw_len,
+void ASN1ProtoToDER::EncodeOverrideLength(const std::string& raw_len,
                                           const size_t len_pos) {
   encoder_.insert(encoder_.begin() + len_pos, raw_len.begin(), raw_len.end());
 }
@@ -76,13 +76,16 @@ void ASN1ProtoToDER::EncodeLength(const Length& len,
 
 void ASN1ProtoToDER::EncodeValue(const Value& val) {
   for (const auto& val_ele : val.val_array()) {
-    if (!kErrRecursionLimitReached) {
-      if (val_ele.has_pdu()) {
-        EncodePDU(val_ele.pdu());
-      } else {
-        encoder_.insert(encoder_.end(), val_ele.val_bits().begin(),
-                        val_ele.val_bits().end());
-      }
+    if (kErrRecursionLimitReached) {
+      // If the message exceeds the recursion limit, abort processing the
+      // protobuf in order to limit uninteresting work.
+      return;
+    }
+    if (val_ele.has_pdu()) {
+      EncodePDU(val_ele.pdu());
+    } else {
+      encoder_.insert(encoder_.end(), val_ele.val_bits().begin(),
+                      val_ele.val_bits().end());
     }
   }
 }
@@ -126,28 +129,27 @@ void ASN1ProtoToDER::EncodeIdentifier(const Identifier& id) {
 }
 
 void ASN1ProtoToDER::EncodePDU(const PDU& pdu) {
-  ++depth_;
   // Artifically limit the stack depth to avoid stack overflow.
   if (depth_ > kRecursionLimit) {
     kErrRecursionLimitReached = true;
     return;
+  } else {
+    ++depth_;
   }
   size_t size_before_insertion = encoder_.size();
   EncodeIdentifier(pdu.id());
-  size_t id_size = encoder_.size() - size_before_insertion;
+  size_t len_pos = encoder_.size();
   EncodeValue(pdu.val());
-  size_t value_size = encoder_.size() - size_before_insertion - id_size;
-  EncodeLength(pdu.len(), value_size, size_before_insertion + id_size);
+  EncodeLength(pdu.len(), encoder_size() - len_pos, len_pos);
   --depth_;
 }
 
 std::vector<uint8_t> ASN1ProtoToDER::ProtoToDER(const PDU& pdu) {
-  // The same instantiaton of ANS1ProtoToDER can encode multiple PDU's.
-  // The following three instructions are used to reset the values
-  // before each PDU is encoded.
+  // Reset the previous state.
   encoder_.clear();
   depth_ = 0;
   kErrRecursionLimitReached = false;
+
   EncodePDU(pdu);
   if (kErrRecursionLimitReached) {
     encoder_.clear();
