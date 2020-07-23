@@ -7,7 +7,7 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
-#include "asn1.pb.h"
+#include "asn1_pdu.pb.h"
 
 namespace asn1_pdu {
 
