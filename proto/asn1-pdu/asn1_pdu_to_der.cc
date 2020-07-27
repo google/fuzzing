@@ -65,14 +65,13 @@ void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
 void ASN1PDUToDER::EncodeLength(const Length& len,
                                   const size_t actual_len,
                                   const size_t len_pos) {
-  // if (len.has_length_override()) {
-  //   EncodeOverrideLength(len.length_override(), len_pos);
-  // } else if (len.has_indefinite_form() && len.indefinite_form()) {
-  //   EncodeIndefiniteLength(len_pos);
-  // } else {
-  //   EncodeDefiniteLength(actual_len, len_pos);
-  // }
-  EncodeDefiniteLength(actual_len, len_pos);
+  if (len.has_length_override()) {
+    EncodeOverrideLength(len.length_override(), len_pos);
+  } else if (len.has_indefinite_form() && len.indefinite_form()) {
+    EncodeIndefiniteLength(len_pos);
+  } else {
+    EncodeDefiniteLength(actual_len, len_pos);
+  }
 }
 
 void ASN1PDUToDER::EncodeValue(const Value& val) {
@@ -120,9 +119,6 @@ void ASN1PDUToDER::EncodeIdentifier(const Identifier& id) {
   uint32_t tag_num = id.tag_num().has_high_tag_num()
                          ? id.tag_num().high_tag_num()
                          : id.tag_num().low_tag_num();
-  if(tag_num == 0) {
-    tag_num = 0x03;
-  }
   // When the tag number is greater than or equal to 31, encode with a single
   // byte; otherwise, use the high-tag-number form (X.690 (2015), 8.1.2).
   if (tag_num >= 31) {
