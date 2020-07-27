@@ -1,5 +1,8 @@
-# ASN.1 PDU Protobuf
-This protobuf represents an ASN.1 PDU defined in spec X.690 (2015). Along with the converter, the protobuf can be used to generate intersting inputs for a fuzzer.
+This [protobuf](https://developers.google.com/protocol-buffers) represents a
+DER-encoded ASN.1 PDU, defined in X.690 (2015). When used with
+[libprotobuf-mutator](https://github.com/google/libprotobuf-mutator), the protobuf can be used
+to produce valid DER sequences, as well as syntactically invalid (e.g. BER) and structurally
+invalid (e.g. random data) inputs for a fuzzer.
 
 ## How to use it
-(to do: attach link to OSS-FUZZ with example)
+Example fuzz targets that use this proto can be seen here: https://github.com/google/oss-fuzz/pull/4179.
