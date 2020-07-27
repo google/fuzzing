@@ -1,6 +1,7 @@
 #ifndef ASN1_PDU_TO_DER_H_
 #define ASN1_PDU_TO_DER_H_
 
+#include <limits.h>
 #include <stdint.h>
 
 #include <string>
@@ -67,7 +68,10 @@ class ASN1PDUToDER {
 
   // Tracks recursion depth to avoid stack exhaustion.
   size_t depth_;
-};
+
+  // Whether |depth_| exceeded the recursion limit, causing an early return.
+  bool recursion_exceeded_;
+}
 
 }  // namespace asn1_pdu
 
