@@ -1,4 +1,3 @@
-# ASN.1 PDU Protobuf
 This [protobuf](https://developers.google.com/protocol-buffers) represents a
 DER-encoded ASN.1 PDU, defined in X.690 (2015). When used with
 [libprotobuf-mutator](https://github.com/google/libprotobuf-mutator), the protobuf can be used
