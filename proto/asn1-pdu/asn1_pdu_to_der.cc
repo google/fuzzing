@@ -9,8 +9,8 @@ static constexpr size_t kRecursionLimit = 200;
 uint8_t ASN1PDUToDER::GetVariableIntLen(const uint64_t value,
                                         const size_t base) {
   uint8_t base_bits = log2(base);
-  for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT;
-       num_bits >= base_bits; num_bits -= base_bits) {
+  for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT; num_bits >= base_bits;
+       num_bits -= base_bits) {
     if (value >> num_bits) {
       return ceil(static_cast<double>(num_bits) / base_bits) + 1;
     }
