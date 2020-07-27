@@ -71,7 +71,7 @@ class ASN1PDUToDER {
 
   // Whether |depth_| exceeded the recursion limit, causing an early return.
   bool recursion_exceeded_;
-}
+};
 
 }  // namespace asn1_pdu
 
