@@ -10,9 +10,20 @@ namespace asn1_types {
 
 class ASN1TypesToDER {
  public:
+  // Encodes |bit_string| according to X.690 (2015), 8.6;
+  // returning a vector with the DER encoding.
   std::vector<uint8_t> EncodeBitString(const BitString& bit_string);
+
+  // Encodes |integer| according to X.690 (2015), 8.3;
+  // returning a vector with the DER encoding.
   std::vector<uint8_t> EncodeInteger(const Integer& integer);
+
+  // Encodes |utc_time| according to X.690 (2015), 11.8;
+  // returning a vector with the DER encoding.
   std::vector<uint8_t> EncodeUTCTime(const UTCTime& utc_time);
+
+  // Encodes |generalized_time| according to X.690 (2015), 11.7;
+  // returning a vector with the DER encoding.
   std::vector<uint8_t> EncodeGeneralizedTime(
       const GeneralizedTime& generalized_time);
 };

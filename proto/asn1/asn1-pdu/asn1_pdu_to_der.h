@@ -26,7 +26,6 @@ class ASN1PDUToDER {
   void EncodePDU(const PDU& pdu);
 
   // Encodes |id| to DER according to X.690 (2015), 8.1.2.
-  // Returns number of bytes used to encode |id|.
   void EncodeIdentifier(const Identifier& id);
 
   // Concatinates |id_class|, |encoding|, and |tag| according to DER
