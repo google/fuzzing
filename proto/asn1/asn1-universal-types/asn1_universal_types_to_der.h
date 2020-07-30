@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include "asn1_types.pb.h"
+#include "asn1_universal_types.pb.h"
 #include "common.h"
 
-namespace asn1_types {
+namespace asn1_universal_types {
 
-class ASN1TypesToDER {
+class ASN1UniversalTypesToDER {
  public:
   // Encodes |bit_string| according to X.690 (2015), 8.6;
   // returning a vector with the DER encoding.

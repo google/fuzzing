@@ -2,7 +2,7 @@
 // found in X509 Certifiactes.
 syntax = "proto2";
 
-package asn1_types;
+package asn1_univerasl_types;
 
 // See X.690 (2015), 8.1.2.5.
 enum Encoding {

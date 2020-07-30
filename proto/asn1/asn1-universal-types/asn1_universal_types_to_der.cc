@@ -1,8 +1,8 @@
 #include "asn1_types_to_der.h"
 
-namespace asn1_types {
+namespace asn1_universal_types {
 
-std::vector<uint8_t> ASN1TypesToDER::EncodeBitString(
+std::vector<uint8_t> ASN1UniversalTypesToDER::EncodeBitString(
     const BitString& bit_string) {
   std::vector<uint8_t> der;
   // BitString has tag number 3 and can be both constructed and primitive
@@ -18,7 +18,7 @@ std::vector<uint8_t> ASN1TypesToDER::EncodeBitString(
   return der;
 }
 
-std::vector<uint8_t> ASN1TypesToDER::EncodeInteger(const Integer& integer) {
+std::vector<uint8_t> ASN1UniversalTypesToDER::EncodeInteger(const Integer& integer) {
   std::vector<uint8_t> der;
   // Integer has tag number 2 (X.208, Table 1) and is always primitive (X.690
   // (2015), 8.3.1).
@@ -28,7 +28,7 @@ std::vector<uint8_t> ASN1TypesToDER::EncodeInteger(const Integer& integer) {
   return der;
 }
 
-std::vector<uint8_t> ASN1TypesToDER::EncodeUTCTime(const UTCTime& utc_time) {
+std::vector<uint8_t> ASN1UniversalTypesToDER::EncodeUTCTime(const UTCTime& utc_time) {
   std::vector<uint8_t> der;
   const google::protobuf::Descriptor* desc = utc_time.GetDescriptor();
   const google::protobuf::Reflection* ref = utc_time.GetReflection();
@@ -48,7 +48,7 @@ std::vector<uint8_t> ASN1TypesToDER::EncodeUTCTime(const UTCTime& utc_time) {
   return der;
 }
 
-std::vector<uint8_t> ASN1TypesToDER::EncodeGeneralizedTime(
+std::vector<uint8_t> ASN1UniversalTypesToDER::EncodeGeneralizedTime(
     const GeneralizedTime& generalized_time) {
   std::vector<uint8_t> der;
   const google::protobuf::Descriptor* desc = generalized_time.GetDescriptor();
