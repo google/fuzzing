@@ -15,6 +15,15 @@ class ASN1TypesToDER {
   std::vector<uint8_t> EncodeUTCTime(const UTCTime& utc_time);
   std::vector<uint8_t> EncodeGeneralizedTime(
       const GeneralizedTime& generalized_time);
+
+ private:
+  void EncodeTagAndLength(const size_t tag,
+                          const size_t len,
+                          const size_t pos,
+                          std::vector<uint8_t>& der);
+  void EncodeDefiniteLength(const size_t actual_len,
+                            const size_t len_pos,
+                            const std::vector<uint8_t>& der);
 };
 
 }  // namespace asn1_types
