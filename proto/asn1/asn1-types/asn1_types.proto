@@ -1,0 +1,77 @@
+// This proto represents the Universal types
+// found in X509 Certifiactes.
+syntax = "proto2";
+
+package asn1_types;
+
+// See X.690 (2015), 8.1.2.5.
+enum Encoding {
+  Primitive = 0;
+  Constructed = 1;
+}
+
+// See X.690 (2015), 8.6.
+message BitString {
+  // BitString is either constructed or primitive (X.690 (2015), 8.6.1).
+  required Encoding encoding = 1;
+  required bytes val = 2;
+}
+
+// See X.690 (2015), 8.3.
+message Integer {
+  required bytes val = 2;
+}
+
+// See X.690 (2015), 11.8.
+message UTCTime {
+  required TimeValue year_tens_digit = 1;
+  required TimeValue year_ones_digit = 2;
+  required TimeValue month_tens_digit = 3;
+  required TimeValue month_ones_digit = 4;
+  required TimeValue day_tens_digit = 5;
+  required TimeValue day_ones_digit = 6;
+  required TimeValue hour_tens_digit = 7;
+  required TimeValue hour_ones_digit = 8;
+  required TimeValue minute_tens_digit = 9;
+  required TimeValue minute_ones_digit = 10;
+  required TimeValue second_tens_digit = 11;
+  required TimeValue second_ones_digit = 12;
+  // See X.690 (2015), 11.8.1: Encoding terminates with "Z".
+  required bool zulu = 13;
+}
+
+// See X.690 (2015), 11.7.
+message GeneralizedTime {
+  // See X.690 (2015), 11.7.5: GeneralizedTime also includes the
+  // thousands digit and hundreds digit of the year.
+  required TimeValue year_thousands_digit = 1;
+  required TimeValue year_hundreds_digit = 2;
+  required TimeValue year_tens_digit = 3;
+  required TimeValue year_ones_digit = 4;
+  required TimeValue month_tens_digit = 5;
+  required TimeValue month_ones_digit = 6;
+  required TimeValue day_tens_digit = 7;
+  required TimeValue day_ones_digit = 8;
+  required TimeValue hour_tens_digit = 9;
+  required TimeValue hour_ones_digit = 10;
+  required TimeValue minute_tens_digit = 11;
+  required TimeValue minute_ones_digit = 12;
+  required TimeValue second_tens_digit = 13;
+  required TimeValue second_ones_digit = 14;
+  // See X.690 (2015), 11.7.1: Encoding terminates with "Z".
+  required bool zulu = 15;
+}
+
+// Each digit in the time is a value between 0 through 9.
+enum TimeValue {
+  VAL0 = 0;
+  VAL1 = 1;
+  VAL2 = 2;
+  VAL3 = 3;
+  VAL4 = 4;
+  VAL5 = 5;
+  VAL6 = 6;
+  VAL7 = 7;
+  VAL8 = 8;
+  VAL9 = 9;
+}
