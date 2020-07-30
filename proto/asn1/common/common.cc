@@ -24,8 +24,8 @@ void InsertVariableInt(const size_t value,
 
 void EncodeLength(const size_t len,
                   const size_t len_pos,
-                  const std::vector<uint8_t>& der) {
-  InsertVariableInt(len, len_pos);
+                  std::vector<uint8_t>& der) {
+  InsertVariableInt(len, len_pos, der);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal
