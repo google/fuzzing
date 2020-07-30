@@ -22,7 +22,6 @@ void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
 void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
                                         const size_t len_pos) {
   InsertVariableInt(actual_len, len_pos, der_);
-  size_t len_num_bytes = GetVariableIntLen(actual_len, 256);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal
@@ -32,6 +31,7 @@ void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
     // Long-form length is encoded as a byte with the high-bit set to indicate
     // the long-form, while the remaining bits indicate how many bytes are used
     // to encode the length.
+    size_t len_num_bytes = GetVariableIntLen(actual_len, 256);
     der_.insert(der_.begin() + len_pos, (0x80 | len_num_bytes));
   }
 }
