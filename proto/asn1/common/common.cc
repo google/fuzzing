@@ -22,10 +22,11 @@ void InsertVariableInt(const size_t value,
   der.insert(der.begin() + pos, variable_int.begin(), variable_int.end());
 }
 
-void EncodeLength(const size_t len,
-                  const size_t len_pos,
-                  std::vector<uint8_t>& der) {
-  InsertVariableInt(len, len_pos, der);
+void EncodeTagAndLength(const size_t tag,
+                        const size_t len,
+                        const size_t pos,
+                        std::vector<uint8_t>& der) {
+  InsertVariableInt(len, pos, der);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal
@@ -36,14 +37,7 @@ void EncodeLength(const size_t len,
     // the long-form, while the remaining bits indicate how many bytes are used
     // to encode the length.
     size_t len_num_bytes = GetVariableIntLen(len, 256);
-    der.insert(der.begin() + len_pos, (0x80 | len_num_bytes));
+    der.insert(der.begin() + pos, (0x80 | len_num_bytes));
   }
-}
-
-void EncodeTag(const bool constructed,
-               const size_t tag_num,
-               const size_t pos,
-               std::vector<uint8_t>& der) {
-  uint8_t encoding = constructed ? 1 << 5 : 0;
-  der.insert(der.begin() + pos, (encoding | tag_num));
+  der.insert(der.begin() + pos, tag);
 }
