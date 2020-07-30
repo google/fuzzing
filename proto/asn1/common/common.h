@@ -6,8 +6,12 @@
 
 #include <vector>
 
+// Returns the number of bytes needed to |base| encode |value| into a
+// variable-length unsigned integer with no leading zeros.
 uint8_t GetVariableIntLen(const uint64_t value, const size_t base);
 
+// Converts |value| to a variable-length, big-endian representation and
+// inserts the result into into |der| at |pos|.
 void InsertVariableInt(const size_t value,
                        const size_t pos,
                        std::vector<uint8_t>& der);

@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "asn1_pdu.pb.h"
+#include "common.h"
 
 namespace asn1_pdu {
 
@@ -57,14 +58,6 @@ class ASN1PDUToDER {
 
   // Extracts bytes from |val| and inserts them into |enocder_|.
   void EncodeValue(const Value& val);
-
-  // Converts |value| to a variable-length, big-endian representation and
-  // inserts the result into into |der_| at |pos|.
-  void InsertVariableInt(const size_t value, const size_t pos);
-
-  // Returns the number of bytes needed to |base| encode |value| into a
-  // variable-length unsigned integer with no leading zeros.
-  uint8_t GetVariableIntLen(const uint64_t value, const size_t base);
 
   // Tracks recursion depth to avoid stack exhaustion.
   size_t depth_;

@@ -6,27 +6,6 @@ namespace asn1_pdu {
 // fail.
 static constexpr size_t kRecursionLimit = 200;
 
-uint8_t ASN1PDUToDER::GetVariableIntLen(const uint64_t value,
-                                        const size_t base) {
-  uint8_t base_bits = log2(base);
-  for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT; num_bits >= base_bits;
-       num_bits -= base_bits) {
-    if (value >> num_bits) {
-      return ceil(static_cast<double>(num_bits) / base_bits) + 1;
-    }
-  }
-  // Special-case: zero requires one, not zero bytes.
-  return 1;
-}
-
-void ASN1PDUToDER::InsertVariableInt(const size_t value, const size_t pos) {
-  std::vector<uint8_t> variable_int;
-  for (uint8_t shift = GetVariableIntLen(value, 256); shift != 0; --shift) {
-    variable_int.push_back((value >> ((shift - 1) * CHAR_BIT)) & 0xFF);
-  }
-  der_.insert(der_.begin() + pos, variable_int.begin(), variable_int.end());
-}
-
 void ASN1PDUToDER::EncodeOverrideLength(const std::string& raw_len,
                                         const size_t len_pos) {
   der_.insert(der_.begin() + len_pos, raw_len.begin(), raw_len.end());
@@ -42,7 +21,7 @@ void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
 
 void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
                                         const size_t len_pos) {
-  InsertVariableInt(actual_len, len_pos);
+  InsertVariableInt(actual_len, len_pos, der_);
   size_t len_num_bytes = GetVariableIntLen(actual_len, 256);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
@@ -101,7 +80,7 @@ void ASN1PDUToDER::EncodeHighTagNumberForm(const uint8_t id_class,
     id_parsed <<= 8;
   }
   id_parsed |= (tag_num & 0x7F);
-  InsertVariableInt(id_parsed, der_.size());
+  InsertVariableInt(id_parsed, der_.size(), der_);
 }
 
 void ASN1PDUToDER::EncodeIdentifier(const Identifier& id) {
