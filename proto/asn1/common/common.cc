@@ -1,4 +1,5 @@
 #include "common.h"
+#include <iostream>
 
 uint8_t GetVariableIntLen(const uint64_t value, const size_t base) {
   uint8_t base_bits = log2(base);
@@ -40,4 +41,16 @@ void EncodeTagAndLength(const size_t tag,
     der.insert(der.begin() + pos, (0x80 | len_num_bytes));
   }
   der.insert(der.begin() + pos, tag);
+}
+
+void SetTag(const size_t tag,
+            const size_t pos_of_tag,
+            std::vector<uint8_t>& der) {
+  if ((der[pos_of_tag] & 0x1F) == 0x1F) {
+    while (der[pos_of_tag + 1] & 0x80) {
+      der.erase(der.begin() + pos_of_tag + 1);
+    }
+    der.erase(der.begin() + pos_of_tag + 1);
+  }
+  der[pos_of_tag] = tag;
 }
