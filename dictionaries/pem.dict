@@ -1,0 +1,28 @@
+#  https://tools.ietf.org/html/rfc1421
+#  https://tools.ietf.org/html/rfc1424
+
+# Fields
+"CRL:"
+"Content-Domain:"
+"DEK-Info:"
+"Issuer-Certificate:"
+"Key-Info:"
+"MIC-Info:"
+"Originator-Certificate:"
+"Originator-ID-Symmetric:"
+"Originator-ID-Asymmetric:"
+"Proc-Type:"
+"Recipient-ID-Symmetric:"
+"Recipient-ID-Asymmetric:"
+
+# Values
+"MIC-CLEAR"
+"ENCRYPTED"
+"CRL"
+"MIC-ONLY"
+"RFC822"
+"RSA-MD2"
+"RSA-MD5"
+"RSA"
+
+"X-"
