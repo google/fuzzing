@@ -11,24 +11,25 @@
 
 namespace asn1_universal_types {
 
-// Appends DER encoded |bit_string| to |der| according to X.690
-// (2015), 8.6.
+// DER encodes |bit_string| according to X.690 (2015), 8.6.
+// Appends encoded |bit_string| to |der|.
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der);
 
-// Appends DER encoded |integer| to |der| according to X.690
-// (2015), 8.3.
+// DER encodes |integer| according to X.690 (2015), 8.3.
+// Appends encoded |integer| to |der|.
 void Encode(const Integer& integer, std::vector<uint8_t>& der);
 
-// Appends DER encoded |utc_time| to |der| according to X.690
-// (2015), 11.8.
+// DER encodes |utc_time| according to X.690 (2015), 11.8.
+// Appends encoded |utc_time| to |der|.
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
 
-// Appends DER encoded |generalized_time| to |der| according to X.690
-// (2015), 11.7.
+// DER encodes |generalized_time| according to X.690 (2015), 11.7.
+// Appends encoded |generalized_time| to |der|.
 void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 
-// Appends DER encoded |time_stamp| to |der| where |num_fields| determines
-// which type of ASN.1 Time is encoded according to X.690 (2015), 11.7 & 11.8.
+// DER encodes |time_stamp| where |num_fields| determines which type of ASN.1
+// TIME type is encoded.
+// Appends encoded |time_stamp| to |der|.
 void Encode(const google::protobuf::Timestamp& time_stamp,
             const uint8_t num_fields,
             std::vector<uint8_t>& der);
