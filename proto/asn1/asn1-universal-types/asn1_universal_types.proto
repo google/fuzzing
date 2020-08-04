@@ -3,6 +3,7 @@
 syntax = "proto2";
 
 import "asn1_pdu.proto";
+import "google/protobuf/timestamp.proto";
 
 package asn1_universal_types;
 
@@ -20,84 +21,13 @@ message Integer {
 
 // See X.690 (2015), 11.8.
 message UTCTime {
-  required TimeValue0To9 year_tens_digit = 1;
-  required TimeValue0To9 year_ones_digit = 2;
-  required TimeValue0To1 month_tens_digit = 3;
-  required TimeValue0To9 month_ones_digit = 4;
-  required TimeValue0To3 day_tens_digit = 5;
-  required TimeValue0To9 day_ones_digit = 6;
-  required TimeValue0To2 hour_tens_digit = 7;
-  required TimeValue0To9 hour_ones_digit = 8;
-  required TimeValue0To5 minute_tens_digit = 9;
-  required TimeValue0To9 minute_ones_digit = 10;
-  required TimeValue0To5 second_tens_digit = 11;
-  required TimeValue0To9 second_ones_digit = 12;
+  required google.protobuf.Timestamp time_stamp = 1;
   // See X.690 (2015), 11.8.1: Encoding terminates with "Z".
-  required bool zulu = 13;
 }
 
 // See X.690 (2015), 11.7.
 message GeneralizedTime {
   // See X.690 (2015), 11.7.5: GeneralizedTime also includes the
   // thousands digit and hundreds digit of the year.
-  required TimeValue1To2 year_thousands_digit = 1;
-  required TimeValue0To9 year_hundreds_digit = 2;
-  required TimeValue0To9 year_tens_digit = 3;
-  required TimeValue0To9 year_ones_digit = 4;
-  required TimeValue0To1 month_tens_digit = 5;
-  required TimeValue0To9 month_ones_digit = 6;
-  required TimeValue0To3 day_tens_digit = 7;
-  required TimeValue0To9 day_ones_digit = 8;
-  required TimeValue0To2 hour_tens_digit = 9;
-  required TimeValue0To9 hour_ones_digit = 10;
-  required TimeValue0To5 minute_tens_digit = 11;
-  required TimeValue0To9 minute_ones_digit = 12;
-  required TimeValue0To5 second_tens_digit = 13;
-  required TimeValue0To9 second_ones_digit = 14;
-  // See X.690 (2015), 11.7.1: Encoding terminates with "Z".
-  required bool zulu = 15;
-}
-
-enum TimeValue0To9 {
-  val_0_9_0 = 0;
-  val_0_9_1 = 1;
-  val_0_9_2 = 2;
-  val_0_9_3 = 3;
-  val_0_9_4 = 4;
-  val_0_9_5 = 5;
-  val_0_9_6 = 6;
-  val_0_9_7 = 7;
-  val_0_9_8 = 8;
-  val_0_9_9 = 9;
-}
-
-enum TimeValue0To5 {
-  val_0_5_0 = 0;
-  val_0_5_1 = 1;
-  val_0_5_2 = 2;
-  val_0_5_3 = 3;
-  val_0_5_4 = 4;
-  val_0_5_5 = 5;
-}
-
-enum TimeValue0To3 {
-  val_0_3_0 = 0;
-  val_0_3_1 = 1;
-  val_0_3_2 = 2;
-}
-
-enum TimeValue0To2 {
-  val_0_2_0 = 0;
-  val_0_2_1 = 1;
-  val_0_2_2 = 2;
-}
-
-enum TimeValue1To2 {
-  val_1_2_1 = 1;
-  val_1_2_2 = 2;
-}
-
-enum TimeValue0To1 {
-  val_0_1_0 = 0;
-  val_0_1_1 = 1;
+  required google.protobuf.Timestamp time_stamp = 1;
 }

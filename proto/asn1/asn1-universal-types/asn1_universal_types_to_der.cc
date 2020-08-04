@@ -1,4 +1,6 @@
 #include "asn1_universal_types_to_der.h"
+#include <google/protobuf/util/time_util.h>
+#include <time.h>
 
 namespace asn1_universal_types {
 
@@ -24,77 +26,82 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
 }
 
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
-  // Check for zulu and insert at the beginning to avoid memmove.
-  uint8_t size = utc_time.zulu() ? 13 : 12;
+  const size_t size_before = der.size();
+
+  const auto time_stamp = utc_time.time_stamp();
+  time_t rawtime =
+      google::protobuf::util::TimeUtil::TimestampToTimeT(time_stamp);
+  struct tm* ptm;
+  ptm = gmtime(&rawtime);
+
+  const uint16_t years_since_1900 = ptm->tm_year;
+  der.push_back(0x30 + 0x01 + (years_since_1900 / 1000));
+  der.push_back(0x30 + 0x09 + (years_since_1900 / 100));
+  der.push_back(0x30 + (years_since_1900 / 10));
+  der.push_back(0x30 + (years_since_1900 % 10));
+
+  const uint8_t months_since_jan = ptm->tm_mon;
+  der.push_back(0x31 + (months_since_jan / 10));
+  der.push_back(0x31 + (months_since_jan % 10));
+
+  const uint8_t day_of_month = ptm->tm_mday;
+  der.push_back(0x30 + (day_of_month / 10));
+  der.push_back(0x30 + (day_of_month % 10));
+
+  const uint8_t hours_since_midnight = ptm->tm_hour;
+  der.push_back(0x30 + (hours_since_midnight / 10));
+  der.push_back(0x30 + (hours_since_midnight % 10));
+
+  const uint8_t minutes_after_hour = ptm->tm_min;
+  der.push_back(0x30 + (minutes_after_hour / 10));
+  der.push_back(0x30 + (minutes_after_hour % 10));
+
+  // The encoding shall terminate with "Z" (X.690 (2015), 11.7.1 | ISO/IEC
+  // 8824-1).
+  der.push_back(0x5a);
+
   // UTCTime has tag number 23 (X.208, Table 1).
-  EncodeTagAndLength(0x17, size, der.size(), der);
-
-  const google::protobuf::Descriptor* desc = utc_time.GetDescriptor();
-  const google::protobuf::Reflection* ref = utc_time.GetReflection();
-  // |utc_time| has 12 time values (X.690 (2015), 11.8).
-  for (int i = 0; i < 12; i++) {
-    der.push_back(ref->GetEnumValue(utc_time, desc->field(i)));
-  }
-
-  CorrectTime(der.size() - 12, der);
-
-  for(int i = der.size(); i > der.size() - 12; i--) {
-    // UTCTime is encoded like a string so add 0x30 to get ascii character.
-    der[i] += 0x30;
-  }
-
-  // The encoding shall terminate with "Z" (ITU-T X.680 | ISO/IEC 8824-1).
-  if (utc_time.zulu()) {
-    der.push_back(0x5a);
-  }
+  EncodeTagAndLength(0x17, size_before - der.size(), der.size(), der);
 }
 
 void Encode(const GeneralizedTime& generalized_time,
             std::vector<uint8_t>& der) {
-  // Check for zulu and insert at the beginning to avoid memmove.
-  uint8_t size = generalized_time.zulu() ? 15 : 14;
+  const size_t size_before = der.size();
+
+  const auto time_stamp = generalized_time.time_stamp();
+  time_t rawtime =
+      google::protobuf::util::TimeUtil::TimestampToTimeT(time_stamp);
+  struct tm* ptm;
+  ptm = gmtime(&rawtime);
+
+  const uint16_t years_since_1900 = ptm->tm_year;
+  der.push_back(0x30 + 0x01 + (years_since_1900 / 1000));
+  der.push_back(0x30 + 0x09 + (years_since_1900 / 100));
+  der.push_back(0x30 + (years_since_1900 / 10));
+  der.push_back(0x30 + (years_since_1900 % 10));
+
+  const uint8_t months_since_jan = ptm->tm_mon;
+  der.push_back(0x31 + (months_since_jan / 10));
+  der.push_back(0x31 + (months_since_jan % 10));
+
+  const uint8_t day_of_month = ptm->tm_mday;
+  der.push_back(0x30 + (day_of_month / 10));
+  der.push_back(0x30 + (day_of_month % 10));
+
+  const uint8_t hours_since_midnight = ptm->tm_hour;
+  der.push_back(0x30 + (hours_since_midnight / 10));
+  der.push_back(0x30 + (hours_since_midnight % 10));
+
+  const uint8_t minutes_after_hour = ptm->tm_min;
+  der.push_back(0x30 + (minutes_after_hour / 10));
+  der.push_back(0x30 + (minutes_after_hour % 10));
+
+  // The encoding shall terminate with "Z" (X.690 (2015), 11.7.1 | ISO/IEC
+  // 8824-1).
+  der.push_back(0x5a);
+
   // GeneralizedTime has tag number 24 (X.208, Table 1).
-  EncodeTagAndLength(0x18, size, der.size(), der);
-
-  const google::protobuf::Descriptor* desc = generalized_time.GetDescriptor();
-  const google::protobuf::Reflection* ref = generalized_time.GetReflection();
-  // |generalized_tim| has 14 time values (X.690 (2015), 11.7).
-  for (int i = 0; i < 14; i++) {
-    der.push_back(ref->GetEnumValue(generalized_time, desc->field(i)));
-  }
-
-  CorrectTime(der.size() - 12, der);
-
-  // GeneralizedTime is encoded like a string so add 0x30 to get ascii
-  // character.
-  for (int i = der.size(); i > der.size() - 14; i--) {
-    der[i] += 0x30;
-  }
-
-  // The encoding shall terminate with "Z" (ITU-T X.680 | ISO/IEC 8824-1).
-  if (generalized_time.zulu()) {
-    der.push_back(0x5a);
-  }
-}
-
-void CorrectTime(const size_t pos_of_year, std::vector<uint8_t>& der) {
-  uint8_t month = (der[pos_of_year + 2] * 10) + der[pos_of_year + 3];
-  if (month > 12 || month == 0) {
-    der[pos_of_year + 3] = 1;
-  }
-
-  const uint8_t year = (der[pos_of_year] * 10) + der[pos_of_year + 1];
-  const uint8_t month_fixed = (der[pos_of_year + 2] * 10) + der[pos_of_year + 3];
-  const uint8_t day = (der[pos_of_year + 4] * 10) + der[pos_of_year + 5];
-  std::vector<uint8_t> day_limits = {31, 28, 31, 30, 31, 30,
-                                       31, 31, 30, 31, 30, 31};
-  if (year % 4 == 0) {
-    day_limits[1] = 29;
-  }
-
-  if(day > day_limits[month_fixed] || day == 0) {
-    der[pos_of_year + 4] = 1;
-  }
+  EncodeTagAndLength(0x18, size_before - der.size(), der.size(), der);
 }
 
 }  // namespace asn1_universal_types

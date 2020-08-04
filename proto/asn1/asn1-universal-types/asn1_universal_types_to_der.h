@@ -25,8 +25,6 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
 // returning a vector with the encoded bytes.
 void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 
-void CorrectTime(const size_t pos_of_year, std::vector<uint8_t>& der);
-
 }  // namespace asn1_universal_types
 
 #endif
