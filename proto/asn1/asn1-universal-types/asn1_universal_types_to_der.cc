@@ -45,7 +45,7 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
 
   Encode(utc_time.time_stamp(), 13, der);
 
-  // Check if encoding was unsucessful
+  // Check if encoding was unsuccessful.
   if (der.size() == tag_len_pos) {
     return;
   }
@@ -64,7 +64,7 @@ void Encode(const GeneralizedTime& generalized_time,
 
   Encode(generalized_time.time_stamp(), 15, der);
 
-  // Check if encoding was unsucessful
+  // Check if encoding was unsuccessful.
   if (der.size() == tag_len_pos) {
     return;
   }
