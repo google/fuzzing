@@ -27,8 +27,8 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
 // Appends encoded |generalized_time| to |der|.
 void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 
-// DER encodes |time_stamp| where |num_fields| determines which type of ASN.1
-// TIME type is encoded.
+// DER encodes |time_stamp| where |num_fields| determines the number of fields
+// of the timestamp to encode.
 // Appends encoded |time_stamp| to |der|.
 void Encode(const google::protobuf::Timestamp& time_stamp,
             const uint8_t num_fields,

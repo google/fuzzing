@@ -82,7 +82,7 @@ void Encode(const google::protobuf::Timestamp& time_stamp,
   if (iso_date.size() <= 25) {
     return;
   }
-  
+
   std::string time_str;
   time_str.reserve(num_fields);
   // See X.690 (2015), 11.7.5: GeneralizedTime also includes the thousands digit
