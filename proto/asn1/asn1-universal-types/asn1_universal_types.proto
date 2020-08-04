@@ -12,7 +12,7 @@ message BitString {
   required bytes val = 1;
   // The initial octet shall encode, as an unsigned binary integer
   // with bit 1 as the least significant bit, the number of unused bits
-  // in the final subsequent octet.
+  // in the final subsequent octet (X.690 (2015), 8.6.2.2).
   required UnusedBits unused_bits = 2;
 }
 
