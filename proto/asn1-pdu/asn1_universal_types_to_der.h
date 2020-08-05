@@ -1,5 +1,5 @@
-#ifndef ASN1_UNIVERSAL_TYPES_TO_DER_H_
-#define ASN1_UNIVERSAL_TYPES_TO_DER_H_
+#ifndef PROTO_ASN1_UNIVERSAL_TYPES_TO_DER_H_
+#define PROTO_ASN1_UNIVERSAL_TYPES_TO_DER_H_
 
 #include <google/protobuf/util/time_util.h>
 #include <stdint.h>
@@ -27,11 +27,11 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
 // Appends encoded |generalized_time| to |der|.
 void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 
-// DER encodes |time_stamp| where |num_fields| determines the number of fields
-// of the timestamp to encode.
-// Appends encoded |time_stamp| to |der|.
-void Encode(const google::protobuf::Timestamp& time_stamp,
-            const uint8_t num_fields,
+// Converts |timestamp| to a DER-encoded string (i.e. as used by UTCTime and
+// GeneralizedTime), according to X.690 (2015), 11.7 / 11.8. |use_two_digit_year|
+// controls whether two or four digits will be used for the year.
+void Encode(const google::protobuf::Timestamp& timestamp,
+            bool use_two_digit_year,
             std::vector<uint8_t>& der);
 
 }  // namespace asn1_universal_types

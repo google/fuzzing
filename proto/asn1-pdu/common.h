@@ -1,5 +1,5 @@
-#ifndef COMMON_H_
-#define COMMON_H_
+#ifndef PROTO_ASN1_COMMON_H_
+#define PROTO_ASN1_COMMON_H_
 
 #include <math.h>
 #include <stdint.h>

@@ -7,7 +7,7 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  if (bit_string.val().size()) {
+  if (!bit_string.val().empty()) {
     der.push_back(bit_string.unused_bits());
     der.insert(der.end(), bit_string.val().begin(), bit_string.val().end());
   } else {
@@ -16,8 +16,8 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
     der.push_back(0x00);
   }
 
-  // BitString has tag number 3 (X.208, Table 1) and is primitive in DER
-  // encoding (A Layman's Guide to a Subset of ASN.1, BER, and DER, 5.4).
+  // Bitstring is UNIVERSAL 3 (X.680(2015), 8.6, Table 1) and is always
+  // primitive in DER (X.690(2015), 10.2).
   EncodeTagAndLength(0x03, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
@@ -26,15 +26,15 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  if (integer.val().size()) {
+  if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
   } else {
     // Cannot have an empty integer, so use the value 0.
     der.push_back(0x00);
   }
 
-  // Integer has tag number 2 (X.208, Table 1) and is always primitive (X.690
-  // (2015), 8.3.1).
+  // Integer is UNIVERSAL 2 (X.680(2015), 8.6, Table 1) and is always primitive
+  // in DER (X.690(2015), 8.3.1).
   EncodeTagAndLength(0x02, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
@@ -75,8 +75,8 @@ void Encode(const GeneralizedTime& generalized_time,
   EncodeTagAndLength(0x18, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
-void Encode(const google::protobuf::Timestamp& time_stamp,
-            const uint8_t num_fields,
+void Encode(const google::protobuf::Timestamp& timestamp,
+            bool use_two_digit_year,
             std::vector<uint8_t>& der) {
   std::string iso_date = google::protobuf::util::TimeUtil::ToString(time_stamp);
   if (iso_date.size() <= 25) {
@@ -84,7 +84,6 @@ void Encode(const google::protobuf::Timestamp& time_stamp,
   }
 
   std::string time_str;
-  time_str.reserve(num_fields);
   // See X.690 (2015), 11.7.5: GeneralizedTime also includes the thousands digit
   // and hundreds digit of the year to support dates after 2050 by representing
   // the year with four digits.
@@ -92,8 +91,7 @@ void Encode(const google::protobuf::Timestamp& time_stamp,
   // so need only use tens and ones digit of the year.
   // Paritioning the year ensure always valid encodings, i.e. need not
   // check if the year spans a certain range.
-  time_str +=
-      num_fields == 15 ? iso_date.substr(0, 4) : iso_date.substr(2, 2);  // Year
+  time_str += use_two_digit_year ? iso_date.substr(2, 2) : iso_date.substr(0, 4);  // Year
   time_str += iso_date.substr(5, 2);   // Month
   time_str += iso_date.substr(8, 2);   // Day
   time_str += iso_date.substr(11, 2);  // Hour
