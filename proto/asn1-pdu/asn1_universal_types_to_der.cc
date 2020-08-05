@@ -16,8 +16,6 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
     der.push_back(0x00);
   }
 
-  // Integer is UNIVERSAL 2 (X.680(2015), 8.6, Table 1) and is always primitive
-  // in DER (X.690(2015), 8.3.1).
   EncodeTagAndLength(kAsn1Integer, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
@@ -35,9 +33,8 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
     der.push_back(0x00);
   }
 
-  // Bitstring is UNIVERSAL 3 (X.680(2015), 8.6, Table 1) and is always
-  // primitive in DER (X.690(2015), 10.2).
-  EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos, der);
+  EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos,
+                     der);
 }
 
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
@@ -52,9 +49,6 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
     return;
   }
 
-  // UTCTime has tag number 23 (X.208, Table 1) and is always primitive
-  // in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
-  // DER, 5.17).
   EncodeTagAndLength(kAsn1UTCTime, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
@@ -71,17 +65,15 @@ void Encode(const GeneralizedTime& generalized_time,
     return;
   }
 
-  // GeneralizedTime has tag number 24 (X.208, Table 1) and is always primitive
-  // in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
-  // DER, 5.17).
-  EncodeTagAndLength(kAsn1Generalizedtime, der.size() - tag_len_pos, tag_len_pos, der);
+  EncodeTagAndLength(kAsn1Generalizedtime, der.size() - tag_len_pos,
+                     tag_len_pos, der);
 }
 
 void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
-            bool use_two_digit_year,
-            std::vector<uint8_t>& der) {
+                     bool use_two_digit_year,
+                     std::vector<uint8_t>& der) {
   std::string iso_date = google::protobuf::util::TimeUtil::ToString(timestamp);
-  if (iso_date.size() <= 25) {
+  if (iso_date.size() < 25) {
     return;
   }
 
