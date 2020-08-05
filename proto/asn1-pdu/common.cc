@@ -1,6 +1,6 @@
 #include "common.h"
 
-uint8_t GetVariableIntLen(const uint64_t value, const size_t base) {
+uint8_t GetVariableIntLen(uint64_t value, size_t base) {
   uint8_t base_bits = log2(base);
   for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT; num_bits >= base_bits;
        num_bits -= base_bits) {
@@ -12,9 +12,7 @@ uint8_t GetVariableIntLen(const uint64_t value, const size_t base) {
   return 1;
 }
 
-void InsertVariableInt(const size_t value,
-                       const size_t pos,
-                       std::vector<uint8_t>& der) {
+void InsertVariableInt(uint64_t value, size_t pos, std::vector<uint8_t>& der) {
   std::vector<uint8_t> variable_int;
   for (uint8_t shift = GetVariableIntLen(value, 256); shift != 0; --shift) {
     variable_int.push_back((value >> ((shift - 1) * CHAR_BIT)) & 0xFF);
@@ -22,9 +20,9 @@ void InsertVariableInt(const size_t value,
   der.insert(der.begin() + pos, variable_int.begin(), variable_int.end());
 }
 
-void EncodeTagAndLength(const size_t tag,
-                        const size_t len,
-                        const size_t pos,
+void EncodeTagAndLength(uint8_t tag,
+                        size_t len,
+                        size_t pos,
                         std::vector<uint8_t>& der) {
   InsertVariableInt(len, pos, der);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
@@ -42,9 +40,9 @@ void EncodeTagAndLength(const size_t tag,
   der.insert(der.begin() + pos, tag);
 }
 
-void ReplaceTag(const uint8_t tag_byte,
-            const size_t pos_of_tag,
-            std::vector<uint8_t>& der) {
+void ReplaceTag(uint8_t tag_byte,
+                size_t pos_of_tag,
+                std::vector<uint8_t>& der) {
   if ((der[pos_of_tag] & 0x1F) == 0x1F) {
     while (der[pos_of_tag + 1] & 0x80) {
       der.erase(der.begin() + pos_of_tag + 1);

@@ -6,12 +6,11 @@ namespace asn1_pdu {
 // fail.
 static constexpr size_t kRecursionLimit = 200;
 
-void ASN1PDUToDER::EncodeOverrideLength(const std::string& raw_len,
-                                        const size_t len_pos) {
+void ASN1PDUToDER::EncodeOverrideLength(std::string& raw_len, size_t len_pos) {
   der_.insert(der_.begin() + len_pos, raw_len.begin(), raw_len.end());
 }
 
-void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
+void ASN1PDUToDER::EncodeIndefiniteLength(size_t len_pos) {
   der_.insert(der_.begin() + len_pos, 0x80);
   // The PDU's value is from |len_pos| to the end of |der_|, so just add an
   // EOC marker to the end.
@@ -19,8 +18,7 @@ void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
   der_.push_back(0x00);
 }
 
-void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
-                                        const size_t len_pos) {
+void ASN1PDUToDER::EncodeDefiniteLength(size_t actual_len, size_t len_pos) {
   InsertVariableInt(actual_len, len_pos, der_);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
@@ -37,8 +35,8 @@ void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
 }
 
 void ASN1PDUToDER::EncodeLength(const Length& len,
-                                const size_t actual_len,
-                                const size_t len_pos) {
+                                size_t actual_len,
+                                size_t len_pos) {
   if (len.has_length_override()) {
     EncodeOverrideLength(len.length_override(), len_pos);
   } else if (len.has_indefinite_form() && len.indefinite_form()) {
@@ -64,9 +62,9 @@ void ASN1PDUToDER::EncodeValue(const Value& val) {
   }
 }
 
-void ASN1PDUToDER::EncodeHighTagNumberForm(const uint8_t id_class,
-                                           const uint8_t encoding,
-                                           const uint32_t tag_num) {
+void ASN1PDUToDER::EncodeHighTagNumberForm(uint8_t id_class,
+                                           uint8_t encoding,
+                                           uint32_t tag_num) {
   // The high-tag-number form base 128 encodes |tag_num| (X.690 (2015), 8.1.2).
   uint8_t num_bytes = GetVariableIntLen(tag_num, 128);
   // High-tag-number form requires the lower 5 bits of the identifier to be set

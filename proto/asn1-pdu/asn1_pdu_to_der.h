@@ -30,9 +30,9 @@ class ASN1PDUToDER {
 
   // Concatinates |id_class|, |encoding|, and |tag| according to DER
   // high-tag-number form rules (X.690 (2015), 8.1.2.4).
-  void EncodeHighTagNumberForm(const uint8_t id_class,
-                               const uint8_t encoding,
-                               const uint32_t tag);
+  void EncodeHighTagNumberForm(uint8_t id_class,
+                               uint8_t encoding,
+                               uint32_t tag);
 
   // Encodes the length to DER.
   // |len| can be used to affect the encoding, in order to produce
@@ -44,16 +44,16 @@ class ASN1PDUToDER {
   void EncodeLength(const Length& len, size_t actual_len, size_t len_pos);
 
   // Writes |raw_len| to |der_| at |len_pos|.
-  void EncodeOverrideLength(const std::string& raw_len, const size_t len_pos);
+  void EncodeOverrideLength(std::string& raw_len, size_t len_pos);
 
   // Encodes the indefinite-length indicator (X.690 (2015), 8.1.3.6) at
   // |len_pos|, and appends an End-of-Contents (EOC) marker at the end of
   // |der_|.
-  void EncodeIndefiniteLength(const size_t len_pos);
+  void EncodeIndefiniteLength(size_t len_pos);
 
   // Encodes the length in |actual_len| using the definite-form length (X.690
   // (2015), 8.1.3-8.1.5 & 10.1) into |der_| at |len_pos|.
-  void EncodeDefiniteLength(const size_t actual_len, const size_t len_pos);
+  void EncodeDefiniteLength(size_t actual_len, size_t len_pos);
 
   // Extracts bytes from |val| and inserts them into |enocder_|.
   void EncodeValue(const Value& val);

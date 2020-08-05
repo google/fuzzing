@@ -28,8 +28,9 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
 void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 
 // Converts |timestamp| to a DER-encoded string (i.e. as used by UTCTime and
-// GeneralizedTime), according to X.690 (2015), 11.7 / 11.8. |use_two_digit_year|
-// controls whether two or four digits will be used for the year.
+// GeneralizedTime), according to X.690 (2015), 11.7 / 11.8.
+// |use_two_digit_year| controls whether two or four digits will be used for the
+// year.
 void Encode(const google::protobuf::Timestamp& timestamp,
             bool use_two_digit_year,
             std::vector<uint8_t>& der);

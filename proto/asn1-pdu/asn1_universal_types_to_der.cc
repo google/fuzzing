@@ -91,12 +91,13 @@ void Encode(const google::protobuf::Timestamp& timestamp,
   // so need only use tens and ones digit of the year.
   // Paritioning the year ensure always valid encodings, i.e. need not
   // check if the year spans a certain range.
-  time_str += use_two_digit_year ? iso_date.substr(2, 2) : iso_date.substr(0, 4);  // Year
-  time_str += iso_date.substr(5, 2);   // Month
-  time_str += iso_date.substr(8, 2);   // Day
-  time_str += iso_date.substr(11, 2);  // Hour
-  time_str += iso_date.substr(14, 2);  // Minute
-  time_str += iso_date.substr(17, 2);  // Seconds
+  time_str += use_two_digit_year ? iso_date.substr(2, 2)
+                                 : iso_date.substr(0, 4);  // Year
+  time_str += iso_date.substr(5, 2);                       // Month
+  time_str += iso_date.substr(8, 2);                       // Day
+  time_str += iso_date.substr(11, 2);                      // Hour
+  time_str += iso_date.substr(14, 2);                      // Minute
+  time_str += iso_date.substr(17, 2);                      // Seconds
   // See X.690 (2015), 11.7.1 & 11.8.1: Encoding terminates with "Z".
   time_str += "Z";
 
