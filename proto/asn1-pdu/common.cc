@@ -43,11 +43,16 @@ void EncodeTagAndLength(uint8_t tag,
 void ReplaceTag(uint8_t tag_byte,
                 size_t pos_of_tag,
                 std::vector<uint8_t>& der) {
-  if ((der[pos_of_tag] & 0x1F) == 0x1F) {
-    while (der[pos_of_tag + 1] & 0x80) {
-      der.erase(der.begin() + pos_of_tag + 1);
-    }
-    der.erase(der.begin() + pos_of_tag + 1);
+  if (der.size() < pos_of_tag)
+    return;
+  auto start = der.begin() + pos_of_tag;
+  auto end = start + 1;
+  // Check to see if it's a high tag (multi-byte)
+  if ((*start & 0x1F) == 0x1F) {
+    // High-tag will have 0x80 set if there is >1 byte remaining
+    while (end != der.end() && (*end & 0x80))
+      ++end;
+    start = der.erase(start, end);
   }
-  der[pos_of_tag] = tag_byte;
+  *start = tag_byte;
 }

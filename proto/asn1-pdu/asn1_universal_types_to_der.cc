@@ -1,6 +1,25 @@
 #include "asn1_universal_types_to_der.h"
 
+#include <google/protobuf/util/time_util.h>
+
 namespace asn1_universal_types {
+
+void Encode(const Integer& integer, std::vector<uint8_t>& der) {
+  // Save the current size in |tag_len_pos| to place tag and length
+  // after the value is encoded.
+  const size_t tag_len_pos = der.size();
+
+  if (!integer.val().empty()) {
+    der.insert(der.end(), integer.val().begin(), integer.val().end());
+  } else {
+    // Cannot have an empty integer, so use the value 0.
+    der.push_back(0x00);
+  }
+
+  // Integer is UNIVERSAL 2 (X.680(2015), 8.6, Table 1) and is always primitive
+  // in DER (X.690(2015), 8.3.1).
+  EncodeTagAndLength(kAsn1Integer, der.size() - tag_len_pos, tag_len_pos, der);
+}
 
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
   // Save the current size in |tag_len_pos| to place tag and length
@@ -18,24 +37,7 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
 
   // Bitstring is UNIVERSAL 3 (X.680(2015), 8.6, Table 1) and is always
   // primitive in DER (X.690(2015), 10.2).
-  EncodeTagAndLength(0x03, der.size() - tag_len_pos, tag_len_pos, der);
-}
-
-void Encode(const Integer& integer, std::vector<uint8_t>& der) {
-  // Save the current size in |tag_len_pos| to place tag and length
-  // after the value is encoded.
-  const size_t tag_len_pos = der.size();
-
-  if (!integer.val().empty()) {
-    der.insert(der.end(), integer.val().begin(), integer.val().end());
-  } else {
-    // Cannot have an empty integer, so use the value 0.
-    der.push_back(0x00);
-  }
-
-  // Integer is UNIVERSAL 2 (X.680(2015), 8.6, Table 1) and is always primitive
-  // in DER (X.690(2015), 8.3.1).
-  EncodeTagAndLength(0x02, der.size() - tag_len_pos, tag_len_pos, der);
+  EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
@@ -43,7 +45,7 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  Encode(utc_time.time_stamp(), 13, der);
+  EncodeTimestamp(utc_time.time_stamp(), 13, der);
 
   // Check if encoding was unsuccessful.
   if (der.size() == tag_len_pos) {
@@ -53,7 +55,7 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
   // UTCTime has tag number 23 (X.208, Table 1) and is always primitive
   // in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
   // DER, 5.17).
-  EncodeTagAndLength(0x17, der.size() - tag_len_pos, tag_len_pos, der);
+  EncodeTagAndLength(kAsn1UTCTime, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 void Encode(const GeneralizedTime& generalized_time,
@@ -62,7 +64,7 @@ void Encode(const GeneralizedTime& generalized_time,
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  Encode(generalized_time.time_stamp(), 15, der);
+  EncodeTimestamp(generalized_time.time_stamp(), 15, der);
 
   // Check if encoding was unsuccessful.
   if (der.size() == tag_len_pos) {
@@ -72,10 +74,10 @@ void Encode(const GeneralizedTime& generalized_time,
   // GeneralizedTime has tag number 24 (X.208, Table 1) and is always primitive
   // in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
   // DER, 5.17).
-  EncodeTagAndLength(0x18, der.size() - tag_len_pos, tag_len_pos, der);
+  EncodeTagAndLength(kAsn1Generalizedtime, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
-void Encode(const google::protobuf::Timestamp& timestamp,
+void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
             bool use_two_digit_year,
             std::vector<uint8_t>& der) {
   std::string iso_date = google::protobuf::util::TimeUtil::ToString(timestamp);

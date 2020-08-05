@@ -1,5 +1,5 @@
-#ifndef ASN1_PDU_TO_DER_H_
-#define ASN1_PDU_TO_DER_H_
+#ifndef PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
+#define PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
 
 #include <limits.h>
 #include <stdint.h>
