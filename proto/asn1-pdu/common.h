@@ -23,7 +23,7 @@ void EncodeTagAndLength(const size_t tag,
                         const size_t pos,
                         std::vector<uint8_t>& der);
 
-void SetTag(const size_t tag,
+void ReplaceTag(const uint8_t tag_byte,
             const size_t pos_of_tag,
             std::vector<uint8_t>& der);
 

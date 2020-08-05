@@ -78,7 +78,7 @@ void Encode(const GeneralizedTime& generalized_time,
 void Encode(const google::protobuf::Timestamp& timestamp,
             bool use_two_digit_year,
             std::vector<uint8_t>& der) {
-  std::string iso_date = google::protobuf::util::TimeUtil::ToString(time_stamp);
+  std::string iso_date = google::protobuf::util::TimeUtil::ToString(timestamp);
   if (iso_date.size() <= 25) {
     return;
   }
