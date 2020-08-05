@@ -6,7 +6,8 @@ namespace asn1_pdu {
 // fail.
 static constexpr size_t kRecursionLimit = 200;
 
-void ASN1PDUToDER::EncodeOverrideLength(const std::string& raw_len, size_t len_pos) {
+void ASN1PDUToDER::EncodeOverrideLength(const std::string& raw_len,
+                                        size_t len_pos) {
   der_.insert(der_.begin() + len_pos, raw_len.begin(), raw_len.end());
 }
 

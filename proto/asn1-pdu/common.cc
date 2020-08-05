@@ -20,7 +20,7 @@ void InsertVariableInt(uint64_t value, size_t pos, std::vector<uint8_t>& der) {
   der.insert(der.begin() + pos, variable_int.begin(), variable_int.end());
 }
 
-void EncodeTagAndLength(uint8_t tag,
+void EncodeTagAndLength(uint8_t tag_byte,
                         size_t len,
                         size_t pos,
                         std::vector<uint8_t>& der) {
@@ -37,7 +37,7 @@ void EncodeTagAndLength(uint8_t tag,
     size_t len_num_bytes = GetVariableIntLen(len, 256);
     der.insert(der.begin() + pos, (0x80 | len_num_bytes));
   }
-  der.insert(der.begin() + pos, tag);
+  der.insert(der.begin() + pos, tag_byte);
 }
 
 void ReplaceTag(uint8_t tag_byte,

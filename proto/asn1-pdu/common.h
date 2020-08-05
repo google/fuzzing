@@ -37,9 +37,9 @@ uint8_t GetVariableIntLen(uint64_t value, size_t base);
 // inserts the result into into |der| at |pos|.
 void InsertVariableInt(uint64_t value, size_t pos, std::vector<uint8_t>& der);
 
-// Encodes |tag| and |len| into |der| at |pos| according to X.690
+// Encodes |tag_byte| and |len| into |der| at |pos| according to X.690
 // (2015), 8.1.2-8.1.5.
-void EncodeTagAndLength(uint8_t tag,
+void EncodeTagAndLength(uint8_t tag_byte,
                         size_t len,
                         size_t pos,
                         std::vector<uint8_t>& der);

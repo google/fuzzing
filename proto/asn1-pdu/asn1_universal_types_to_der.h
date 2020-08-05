@@ -31,8 +31,8 @@ void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 // |use_two_digit_year| controls whether two or four digits will be used for the
 // year.
 void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
-            bool use_two_digit_year,
-            std::vector<uint8_t>& der);
+                     bool use_two_digit_year,
+                     std::vector<uint8_t>& der);
 
 }  // namespace asn1_universal_types
 
