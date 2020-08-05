@@ -44,7 +44,7 @@ class ASN1PDUToDER {
   void EncodeLength(const Length& len, size_t actual_len, size_t len_pos);
 
   // Writes |raw_len| to |der_| at |len_pos|.
-  void EncodeOverrideLength(std::string& raw_len, size_t len_pos);
+  void EncodeOverrideLength(const std::string& raw_len, size_t len_pos);
 
   // Encodes the indefinite-length indicator (X.690 (2015), 8.1.3.6) at
   // |len_pos|, and appends an End-of-Contents (EOC) marker at the end of
