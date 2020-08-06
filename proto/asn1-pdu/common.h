@@ -42,7 +42,8 @@ constexpr uint8_t kAsn1UTCTime = kAsn1Universal | 0x17u;
 // primitive in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
 // DER, 5.17).
 constexpr uint8_t kAsn1Generalizedtime = kAsn1Universal | 0x18u;
-
+// Sequence has tag number 16 (X.680 (2015), 8.6, Table 1) and is always
+// consctructed (X.690 (2015), 8.9.1).
 constexpr uint8_t kAsn1Sequence = kAsn1Universal | kAsn1Constructed | 0x10u;
 
 // Returns the number of bytes needed to |base| encode |value| into a
