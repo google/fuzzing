@@ -1,3 +1,19 @@
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include "asn1_universal_types_to_der.h"
 
 #include <google/protobuf/util/time_util.h>
@@ -44,12 +60,11 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
 
   EncodeTimestamp(utc_time.time_stamp(), 13, der);
 
-  // Check if encoding was unsuccessful.
-  if (der.size() == tag_len_pos) {
-    return;
+  // Check if encoding was successful.
+  if (der.size() != tag_len_pos) {
+    EncodeTagAndLength(kAsn1UTCTime, der.size() - tag_len_pos, tag_len_pos,
+                       der);
   }
-
-  EncodeTagAndLength(kAsn1UTCTime, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 void Encode(const GeneralizedTime& generalized_time,
@@ -60,13 +75,11 @@ void Encode(const GeneralizedTime& generalized_time,
 
   EncodeTimestamp(generalized_time.time_stamp(), 15, der);
 
-  // Check if encoding was unsuccessful.
-  if (der.size() == tag_len_pos) {
-    return;
+  // Check if encoding was successful.
+  if (der.size() != tag_len_pos) {
+    EncodeTagAndLength(kAsn1Generalizedtime, der.size() - tag_len_pos,
+                       tag_len_pos, der);
   }
-
-  EncodeTagAndLength(kAsn1Generalizedtime, der.size() - tag_len_pos,
-                     tag_len_pos, der);
 }
 
 void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
@@ -95,9 +108,10 @@ void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
   // See X.690 (2015), 11.7.1 & 11.8.1: Encoding terminates with "Z".
   time_str += "Z";
 
-  for (const char c : time_str) {
-    der.push_back(static_cast<uint8_t>(c));
-  }
+  der.reserve(der.size() + time_str.size());
+  std::transform(
+      time_str.begin(), time_str.end(), der.end(),
+      [](char c) -> auto { return static_cast<uint8_t>(c); });
 }
 
 }  // namespace asn1_universal_types
