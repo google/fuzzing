@@ -16,7 +16,10 @@
 
 #include "asn1_universal_types_to_der.h"
 
+#include <algorithm>
+
 #include <google/protobuf/util/time_util.h>
+#include "common.h"
 
 namespace asn1_universal_types {
 
@@ -96,8 +99,9 @@ void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
   // the year with four digits.
   // See X.690 (2015), 11.8.3: UTCTime represents dates between 1950 and 2050,
   // so need only use tens and ones digit of the year.
-  // Paritioning the year ensure always valid encodings, i.e. need not
-  // check if the year spans a certain range.
+  // Partitioning the year ensure always valid encodings, i.e. if
+  // 1850 is being encoded as a UTCTime, it will be encoded as
+  // '50' for the year, rather than an error.
   time_str += use_two_digit_year ? iso_date.substr(2, 2)
                                  : iso_date.substr(0, 4);  // Year
   time_str += iso_date.substr(5, 2);                       // Month

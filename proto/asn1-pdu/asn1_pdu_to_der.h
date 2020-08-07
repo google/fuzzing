@@ -17,14 +17,12 @@
 #ifndef PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
 #define PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
 
-#include <limits.h>
 #include <stdint.h>
 
 #include <string>
 #include <vector>
 
 #include "asn1_pdu.pb.h"
-#include "common.h"
 
 namespace asn1_pdu {
 
@@ -83,4 +81,4 @@ class ASN1PDUToDER {
 
 }  // namespace asn1_pdu
 
-#endif
+#endif // PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_

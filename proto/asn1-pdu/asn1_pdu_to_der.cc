@@ -16,6 +16,10 @@
 
 #include "asn1_pdu_to_der.h"
 
+#include "common.h"
+
+#include <limits.h>
+
 namespace asn1_pdu {
 
 // The maximum level of recursion allowed. Values greater than this will just

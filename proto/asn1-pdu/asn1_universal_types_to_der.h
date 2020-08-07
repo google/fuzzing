@@ -20,10 +20,8 @@
 #include <stdint.h>
 
 #include <vector>
-#include <algorithm>
 
 #include "asn1_universal_types.pb.h"
-#include "common.h"
 
 namespace asn1_universal_types {
 
@@ -47,10 +45,12 @@ void Encode(const GeneralizedTime& generalized_time, std::vector<uint8_t>& der);
 // GeneralizedTime), according to X.690 (2015), 11.7 / 11.8.
 // |use_two_digit_year| controls whether two or four digits will be used for the
 // year.
+// Note: Although GeneralizedTime supports fractional seconds, they are not
+// encoded here, to ensure compatibility with RFC 5280.
 void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
                      bool use_two_digit_year,
                      std::vector<uint8_t>& der);
 
 }  // namespace asn1_universal_types
 
-#endif
+#endif  // PROTO_ASN1_PDU_UNIVERSAL_TYPES_TO_DER_H_

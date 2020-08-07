@@ -21,7 +21,7 @@ syntax = "proto2";
 package asn1_pdu;
 
 message PDU {
-  // ASN.1 TLV (X.690 (2015), 8.1.1.3).
+  // ASN.1 TLV (X.690 (2015), 8.1.1.1).
   required Identifier id = 1;
   required Length len = 2;
   required Value val = 3;

@@ -14,10 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef PROTO_ASN1_COMMON_H_
-#define PROTO_ASN1_COMMON_H_
+#ifndef PROTO_ASN1_PDU_COMMON_H_
+#define PROTO_ASN1_PDU_COMMON_H_
 
-#include <math.h>
 #include <stdint.h>
 
 #include <vector>
@@ -35,12 +34,10 @@ constexpr uint8_t kAsn1Integer = kAsn1Universal | 0x2u;
 // primitive in DER (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1Bitstring = kAsn1Universal | 0x03u;
 // UTCTime has tag number 23 (X.680 (2015), 8.6, Table 1) and is always
-// primitive in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
-// DER, 5.17).
+// primitive in DER encoding (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1UTCTime = kAsn1Universal | 0x17u;
 // GeneralizedTime has tag number 24 (X.680 (2015), 8.6, Table 1) and is always
-// primitive in DER encoding (A Layman's Guide to a Subset of ASN.1, BER, and
-// DER, 5.17).
+// primitive in DER encoding (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1Generalizedtime = kAsn1Universal | 0x18u;
 // Sequence has tag number 16 (X.680 (2015), 8.6, Table 1) and is always
 // consctructed (X.690 (2015), 8.9.1).
@@ -61,8 +58,11 @@ void EncodeTagAndLength(uint8_t tag_byte,
                         size_t pos,
                         std::vector<uint8_t>& der);
 
-// Updates the tag in |der| to a single byte |tag_byte| assuming it already has
-// been written by EncodetagAndLength or EncodeIdentifier at |pos_of_tag|.
+// Updates the DER-encoded tag in |der| at offset |pos_of_tag| to a single byte
+// tag, |tag_byte|.
+// If the existing tag contains a high tag number (>= 31, per
+// X.590 (2015), 8.1.2.4), the subsequent identifier octets will be removed, so
+// that |der| remains a valid DER encoding.
 void ReplaceTag(uint8_t tag_byte, size_t pos_of_tag, std::vector<uint8_t>& der);
 
-#endif
+#endif  // PROTO_ASN1_PDU_COMMON_H_

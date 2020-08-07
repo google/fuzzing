@@ -16,6 +16,9 @@
 
 #include "common.h"
 
+#include <math.h>
+#include <limits.h>
+
 uint8_t GetVariableIntLen(uint64_t value, size_t base) {
   uint8_t base_bits = log2(base);
   for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT; num_bits >= base_bits;

@@ -14,15 +14,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// This proto represents the Universal types found in X509 Certifiactes.
+// This proto represents the DER-encoding (X.690 (2015)) of the Universal class
+// types used by ASN.1. See X.680 (2015), Section 8.6, Table 1 for the
+// possible types.
 syntax = "proto2";
 
 import "google/protobuf/timestamp.proto";
 
 package asn1_universal_types;
 
-// This represents an ASN.1 BITSTRING, which denotes an
-// arbitrary string of bits (X.690 (2015), 8.6).
+// This represents an ASN.1 BIT STRING, which denotes an arbitrary string of
+// bits (X.690 (2015), 8.6).
 message BitString {
   required bytes val = 1;
   // The initial octet shall encode, as an unsigned binary integer
@@ -50,17 +52,12 @@ message Integer {
   required bytes val = 1;
 }
 
-// This represents an ASN.1 UTCTIME, which denotes a
-// "coordinated universal time" (X.690 (2015), 11.8).
+// This represents an ASN.1 UTCTime (X.690 (2015), 11.8).
 message UTCTime {
-  // Use Timestamp to represent a date by the number of seconds elapsed.
   required google.protobuf.Timestamp time_stamp = 1;
 }
 
-// This represents an ASN.1 GENERALIZEDTIME, which supports
-// dates after 2050 by representing the year with four digits.
-// It also allows fractional seconds (X.690 (2015), 11.7).
+// This represents an ASN.1 GeneralizedTime (X.690 (2015), 11.7).
 message GeneralizedTime {
-  // Use Timestamp to represent a date by the number of seconds elapsed.
   required google.protobuf.Timestamp time_stamp = 1;
 }
