@@ -81,4 +81,4 @@ class ASN1PDUToDER {
 
 }  // namespace asn1_pdu
 
-#endif // PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
+#endif  // PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_

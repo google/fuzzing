@@ -16,8 +16,8 @@
 
 #include "common.h"
 
-#include <math.h>
 #include <limits.h>
+#include <math.h>
 
 uint8_t GetVariableIntLen(uint64_t value, size_t base) {
   uint8_t base_bits = log2(base);
