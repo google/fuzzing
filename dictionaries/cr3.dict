@@ -1,0 +1,37 @@
+# http://lclevy.free.fr/cr2/
+# https://github.com/lclevy/canon_cr3
+# https://exiftool.org/canon_raw.html
+
+"moov"
+"mdat"
+"THMB"
+"CNCV"
+"CCTP"
+"CCDP"
+"CTBO"
+"PRVW"
+"CRAW"
+"JPEG"
+"CMP1"
+"\x01\x01\x00\x00"
+"CDI1"
+"CTMD"
+"CRAW"
+"THMB"
+"CISZ"
+"IMGD"
+"GRID"
+"pixi"
+"colr"
+"hvcC"
+"HEAPCCDR"
+"HEAPJPGM"
+"roll"
+"craw"
+
+# CanonFileDescription
+"EOS"
+"DIGITAL"
+"REBEL"
+"CMOS"
+"RAW"
