@@ -1,4 +1,24 @@
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include "asn1_pdu_to_der.h"
+
+#include "common.h"
+
+#include <limits.h>
 
 namespace asn1_pdu {
 
@@ -6,33 +26,12 @@ namespace asn1_pdu {
 // fail.
 static constexpr size_t kRecursionLimit = 200;
 
-uint8_t ASN1PDUToDER::GetVariableIntLen(const uint64_t value,
-                                        const size_t base) {
-  uint8_t base_bits = log2(base);
-  for (uint8_t num_bits = (sizeof(value) - 1) * CHAR_BIT; num_bits >= base_bits;
-       num_bits -= base_bits) {
-    if (value >> num_bits) {
-      return ceil(static_cast<double>(num_bits) / base_bits) + 1;
-    }
-  }
-  // Special-case: zero requires one, not zero bytes.
-  return 1;
-}
-
-void ASN1PDUToDER::InsertVariableInt(const size_t value, const size_t pos) {
-  std::vector<uint8_t> variable_int;
-  for (uint8_t shift = GetVariableIntLen(value, 256); shift != 0; --shift) {
-    variable_int.push_back((value >> ((shift - 1) * CHAR_BIT)) & 0xFF);
-  }
-  der_.insert(der_.begin() + pos, variable_int.begin(), variable_int.end());
-}
-
 void ASN1PDUToDER::EncodeOverrideLength(const std::string& raw_len,
-                                        const size_t len_pos) {
+                                        size_t len_pos) {
   der_.insert(der_.begin() + len_pos, raw_len.begin(), raw_len.end());
 }
 
-void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
+void ASN1PDUToDER::EncodeIndefiniteLength(size_t len_pos) {
   der_.insert(der_.begin() + len_pos, 0x80);
   // The PDU's value is from |len_pos| to the end of |der_|, so just add an
   // EOC marker to the end.
@@ -40,10 +39,8 @@ void ASN1PDUToDER::EncodeIndefiniteLength(const size_t len_pos) {
   der_.push_back(0x00);
 }
 
-void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
-                                        const size_t len_pos) {
-  InsertVariableInt(actual_len, len_pos);
-  size_t len_num_bytes = GetVariableIntLen(actual_len, 256);
+void ASN1PDUToDER::EncodeDefiniteLength(size_t actual_len, size_t len_pos) {
+  InsertVariableInt(actual_len, len_pos, der_);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal
@@ -53,13 +50,14 @@ void ASN1PDUToDER::EncodeDefiniteLength(const size_t actual_len,
     // Long-form length is encoded as a byte with the high-bit set to indicate
     // the long-form, while the remaining bits indicate how many bytes are used
     // to encode the length.
+    size_t len_num_bytes = GetVariableIntLen(actual_len, 256);
     der_.insert(der_.begin() + len_pos, (0x80 | len_num_bytes));
   }
 }
 
 void ASN1PDUToDER::EncodeLength(const Length& len,
-                                const size_t actual_len,
-                                const size_t len_pos) {
+                                size_t actual_len,
+                                size_t len_pos) {
   if (len.has_length_override()) {
     EncodeOverrideLength(len.length_override(), len_pos);
   } else if (len.has_indefinite_form() && len.indefinite_form()) {
@@ -85,9 +83,9 @@ void ASN1PDUToDER::EncodeValue(const Value& val) {
   }
 }
 
-void ASN1PDUToDER::EncodeHighTagNumberForm(const uint8_t id_class,
-                                           const uint8_t encoding,
-                                           const uint32_t tag_num) {
+void ASN1PDUToDER::EncodeHighTagNumberForm(uint8_t id_class,
+                                           uint8_t encoding,
+                                           uint32_t tag_num) {
   // The high-tag-number form base 128 encodes |tag_num| (X.690 (2015), 8.1.2).
   uint8_t num_bytes = GetVariableIntLen(tag_num, 128);
   // High-tag-number form requires the lower 5 bits of the identifier to be set
@@ -101,7 +99,7 @@ void ASN1PDUToDER::EncodeHighTagNumberForm(const uint8_t id_class,
     id_parsed <<= 8;
   }
   id_parsed |= (tag_num & 0x7F);
-  InsertVariableInt(id_parsed, der_.size());
+  InsertVariableInt(id_parsed, der_.size(), der_);
 }
 
 void ASN1PDUToDER::EncodeIdentifier(const Identifier& id) {

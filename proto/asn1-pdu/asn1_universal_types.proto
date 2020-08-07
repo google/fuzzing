@@ -1,0 +1,63 @@
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// This proto represents the DER-encoding (X.690 (2015)) of the Universal class
+// types used by ASN.1. See X.680 (2015), Section 8.6, Table 1 for the
+// possible types.
+syntax = "proto2";
+
+import "google/protobuf/timestamp.proto";
+
+package asn1_universal_types;
+
+// This represents an ASN.1 BIT STRING, which denotes an arbitrary string of
+// bits (X.690 (2015), 8.6).
+message BitString {
+  required bytes val = 1;
+  // The initial octet shall encode, as an unsigned binary integer
+  // with bit 1 as the least significant bit, the number of unused bits
+  // in the final subsequent octet (X.690 (2015), 8.6.2.2).
+  required UnusedBits unused_bits = 2;
+}
+
+// The number shall be in the range zero to seven. (X.690 (2015), 8.6.2.2).
+enum UnusedBits {
+  VAL0 = 0;
+  VAL1 = 1;
+  VAL2 = 2;
+  VAL3 = 3;
+  VAL4 = 4;
+  VAL5 = 5;
+  VAL6 = 6;
+  VAL7 = 7;
+}
+
+// This represents an ASN.1 INTEGER, which is a 2’s
+// compliment number (X.690 (2015), 8.3).
+message Integer {
+  // Use a series of bytes and let the fuzzer make it positive or negative.
+  required bytes val = 1;
+}
+
+// This represents an ASN.1 UTCTime (X.690 (2015), 11.8).
+message UTCTime {
+  required google.protobuf.Timestamp time_stamp = 1;
+}
+
+// This represents an ASN.1 GeneralizedTime (X.690 (2015), 11.7).
+message GeneralizedTime {
+  required google.protobuf.Timestamp time_stamp = 1;
+}

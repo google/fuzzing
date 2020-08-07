@@ -1,7 +1,22 @@
-#ifndef ASN1_PDU_TO_DER_H_
-#define ASN1_PDU_TO_DER_H_
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-#include <limits.h>
+#ifndef PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
+#define PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
+
 #include <stdint.h>
 
 #include <string>
@@ -25,14 +40,13 @@ class ASN1PDUToDER {
   void EncodePDU(const PDU& pdu);
 
   // Encodes |id| to DER according to X.690 (2015), 8.1.2.
-  // Returns number of bytes used to encode |id|.
   void EncodeIdentifier(const Identifier& id);
 
   // Concatinates |id_class|, |encoding|, and |tag| according to DER
   // high-tag-number form rules (X.690 (2015), 8.1.2.4).
-  void EncodeHighTagNumberForm(const uint8_t id_class,
-                               const uint8_t encoding,
-                               const uint32_t tag);
+  void EncodeHighTagNumberForm(uint8_t id_class,
+                               uint8_t encoding,
+                               uint32_t tag);
 
   // Encodes the length to DER.
   // |len| can be used to affect the encoding, in order to produce
@@ -44,27 +58,19 @@ class ASN1PDUToDER {
   void EncodeLength(const Length& len, size_t actual_len, size_t len_pos);
 
   // Writes |raw_len| to |der_| at |len_pos|.
-  void EncodeOverrideLength(const std::string& raw_len, const size_t len_pos);
+  void EncodeOverrideLength(const std::string& raw_len, size_t len_pos);
 
   // Encodes the indefinite-length indicator (X.690 (2015), 8.1.3.6) at
   // |len_pos|, and appends an End-of-Contents (EOC) marker at the end of
   // |der_|.
-  void EncodeIndefiniteLength(const size_t len_pos);
+  void EncodeIndefiniteLength(size_t len_pos);
 
   // Encodes the length in |actual_len| using the definite-form length (X.690
   // (2015), 8.1.3-8.1.5 & 10.1) into |der_| at |len_pos|.
-  void EncodeDefiniteLength(const size_t actual_len, const size_t len_pos);
+  void EncodeDefiniteLength(size_t actual_len, size_t len_pos);
 
   // Extracts bytes from |val| and inserts them into |enocder_|.
   void EncodeValue(const Value& val);
-
-  // Converts |value| to a variable-length, big-endian representation and
-  // inserts the result into into |der_| at |pos|.
-  void InsertVariableInt(const size_t value, const size_t pos);
-
-  // Returns the number of bytes needed to |base| encode |value| into a
-  // variable-length unsigned integer with no leading zeros.
-  uint8_t GetVariableIntLen(const uint64_t value, const size_t base);
 
   // Tracks recursion depth to avoid stack exhaustion.
   size_t depth_;
@@ -75,4 +81,4 @@ class ASN1PDUToDER {
 
 }  // namespace asn1_pdu
 
-#endif
+#endif  // PROTO_ASN1_PDU_ASN1_PDU_TO_DER_H_
