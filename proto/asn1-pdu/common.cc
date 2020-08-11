@@ -31,7 +31,19 @@ uint8_t GetVariableIntLen(uint64_t value, size_t base) {
   return 1;
 }
 
-void InsertVariableInt(uint64_t value, size_t pos, std::vector<uint8_t>& der) {
+void InsertVariableIntBase128(uint64_t value,
+                              size_t pos,
+                              std::vector<uint8_t>& der) {
+  std::vector<uint8_t> variable_int;
+  for (uint8_t i = GetVariableIntLen(value, 128) - 1; i != 0; --i) {
+    // If it's not the last byte, the high bit is set to 1.
+    variable_int.push_back((0x01 << 7) | ((value >> (i * 7)) & 0x7F));
+  }
+  variable_int.push_back(value & 0x7F);
+  der.insert(der.begin() + pos, variable_int.begin(), variable_int.end());
+}
+
+void InsertVariableIntBase256(uint64_t value, size_t pos, std::vector<uint8_t>& der) {
   std::vector<uint8_t> variable_int;
   for (uint8_t shift = GetVariableIntLen(value, 256); shift != 0; --shift) {
     variable_int.push_back((value >> ((shift - 1) * CHAR_BIT)) & 0xFF);
@@ -43,7 +55,7 @@ void EncodeTagAndLength(uint8_t tag_byte,
                         size_t len,
                         size_t pos,
                         std::vector<uint8_t>& der) {
-  InsertVariableInt(len, pos, der);
+  InsertVariableIntBase256(len, pos, der);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal

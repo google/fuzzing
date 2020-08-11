@@ -47,9 +47,13 @@ constexpr uint8_t kAsn1Sequence = kAsn1Universal | kAsn1Constructed | 0x10u;
 // variable-length unsigned integer with no leading zeros.
 uint8_t GetVariableIntLen(uint64_t value, size_t base);
 
-// Converts |value| to a variable-length, big-endian representation and
+// Converts |value| to a base 128, variable-length, big-endian representation and
 // inserts the result into into |der| at |pos|.
-void InsertVariableInt(uint64_t value, size_t pos, std::vector<uint8_t>& der);
+void InsertVariableIntBase128(uint64_t value, size_t pos, std::vector<uint8_t>& der);
+
+// Converts |value| to a base 256, variable-length, big-endian representation and
+// inserts the result into into |der| at |pos|.
+void InsertVariableIntBase256(uint64_t value, size_t pos, std::vector<uint8_t>& der);
 
 // Encodes |tag_byte| and |len| into |der| at |pos| according to X.690
 // (2015), 8.1.2-8.1.5.
