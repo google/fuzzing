@@ -40,7 +40,7 @@ void ASN1PDUToDER::EncodeIndefiniteLength(size_t len_pos) {
 }
 
 void ASN1PDUToDER::EncodeDefiniteLength(size_t actual_len, size_t len_pos) {
-  InsertVariableInt(actual_len, len_pos, der_);
+  InsertVariableIntBase256(actual_len, len_pos, der_);
   // X.690 (2015), 8.1.3.3: The long-form is used when the length is
   // larger than 127.
   // Note: |len_num_bytes| is not checked here, because it will equal
@@ -86,20 +86,11 @@ void ASN1PDUToDER::EncodeValue(const Value& val) {
 void ASN1PDUToDER::EncodeHighTagNumberForm(uint8_t id_class,
                                            uint8_t encoding,
                                            uint32_t tag_num) {
-  // The high-tag-number form base 128 encodes |tag_num| (X.690 (2015), 8.1.2).
-  uint8_t num_bytes = GetVariableIntLen(tag_num, 128);
   // High-tag-number form requires the lower 5 bits of the identifier to be set
   // to 1 (X.690 (2015), 8.1.2.4.1).
-  uint64_t id_parsed = (id_class | encoding | 0x1F);
-  id_parsed <<= 8;
-  for (uint8_t i = num_bytes - 1; i != 0; --i) {
-    // If it's not the last byte, the high bit is set to 1 (X.690
-    // (2015), 8.1.2.4.2).
-    id_parsed |= ((0x01 << 7) | ((tag_num >> (i * 7)) & 0x7F));
-    id_parsed <<= 8;
-  }
-  id_parsed |= (tag_num & 0x7F);
-  InsertVariableInt(id_parsed, der_.size(), der_);
+  der_.push_back(id_class | encoding | 0x1F);
+  // The high-tag-number form base 128 encodes |tag_num| (X.690 (2015), 8.1.2).
+  InsertVariableIntBase128(tag_num, der_.size(), der_);
 }
 
 void ASN1PDUToDER::EncodeIdentifier(const Identifier& id) {
