@@ -42,7 +42,7 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
   EncodeTagAndLength(kAsn1Integer, der.size(),
-                     std::min<uint8_t>(0x01, integer.val().size()), der);
+                     std::min<size_t>(0x01u, integer.val().size()), der);
 
   if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
