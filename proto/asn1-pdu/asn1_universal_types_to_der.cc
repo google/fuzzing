@@ -23,6 +23,25 @@
 
 namespace asn1_universal_types {
 
+void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
+  // Save the current size in |tag_len_pos| to place tag and length
+  // after the value is encoded.
+  const size_t tag_len_pos = der.size();
+
+  // The contents octets shall consist of a single octet (X.690 (2015), 8.2.1).
+  if (bool.val()) {
+    // If the boolean value is TRUE the octet shall have any non-zero value, as
+    // a sender's option (X.690 (2015), 8.2.2).
+    der.push_back(0xFF);
+  } else {
+    // If the boolean value is FALSE the octet shall be zero (X.690
+    // (2015), 8.2.2).
+    der.push_back(0x00);
+  }
+
+  EncodeTagAndLength(kAsn1Boolean, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
   // Save the current size in |tag_len_pos| to place tag and length
   // after the value is encoded.

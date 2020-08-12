@@ -25,6 +25,10 @@
 
 namespace asn1_universal_types {
 
+// DER encodes |boolean| according to X.690 (2015), 8.2.
+// Appends encoded |boolean| to |der|.
+void Encode(const Boolean& boolean, std::vector<uint8_t>& der);
+
 // DER encodes |integer| according to X.690 (2015), 8.3.
 // Appends encoded |integer| to |der|.
 void Encode(const Integer& integer, std::vector<uint8_t>& der);
