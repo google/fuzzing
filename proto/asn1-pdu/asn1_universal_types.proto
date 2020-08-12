@@ -72,7 +72,7 @@ message GeneralizedTime {
 message ObjectIdentifier {
   required RootNode root = 1;
   required SmallIdentifier small_identifier = 2;
-  // The contents octets shall be an (ordered) list of encodings of
+  // The contents octets shall be a list of encodings of
   // subidentifiers (X.690 (2015), 8.19.2-4).
   repeated uint32 subidentifier = 4;
 }
@@ -84,7 +84,8 @@ enum RootNode {
   RN_VAL_2 = 3;
 }
 
-// 8.19.4 At most 39 subsequent values from nodes reached by X = 0 and X = 1.
+// (X.690 (2015) 8.19.4): At most 39 subsequent values from nodes reached by
+// X = 0 and X = 1.
 enum SmallIdentifier {
   SI_VAL_0 = 0;
   SI_VAL_1 = 1;
