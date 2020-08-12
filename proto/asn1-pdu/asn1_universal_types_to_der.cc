@@ -113,9 +113,8 @@ void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
   time_str += "Z";
 
   der.reserve(der.size() + time_str.size());
-  std::transform(
-      time_str.begin(), time_str.end(), der.end(),
-      [](char c) -> auto { return static_cast<uint8_t>(c); });
+  std::transform(time_str.begin(), time_str.end(), std::back_inserter(der),
+                 [](char c) -> size_t { return c; });
 }
 
 }  // namespace asn1_universal_types
