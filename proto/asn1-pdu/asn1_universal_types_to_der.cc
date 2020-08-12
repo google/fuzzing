@@ -24,9 +24,10 @@
 namespace asn1_universal_types {
 
 void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
-  der.push_back(kAsn1Boolean);  // Tag
-  der.push_back(0x01);          // Length; always one byte.
   // The contents octets shall consist of a single octet (X.690 (2015), 8.2.1).
+  // Therefore, length is always 1.
+  EncodeTagAndLength(kAsn1Boolean, der.size(), 1u, der);  // Length is always 1
+
   if (boolean.val()) {
     // If the boolean value is TRUE, the octet shall have any non-zero value
     // (X.690 (2015), 8.2.2).
@@ -39,8 +40,8 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 }
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
-  der.push_back(kAsn1Integer);                                // Tag
-  der.push_back(std::min<uint8_t>(1, integer.val().size()));  // Length
+  EncodeTagAndLength(kAsn1Integer, der.size(),
+                     std::min<uint8_t>(1u, integer.val().size()), der);
 
   if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
@@ -51,8 +52,8 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
 }
 
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
-  der.push_back(kAsn1Bitstring);               // Tag
-  der.push_back(bit_string.val().size() + 1);  // Length
+  EncodeTagAndLength(kAsn1Bitstring, der.size(), bit_string.val().size() + 1,
+                     der);
 
   if (!bit_string.val().empty()) {
     der.push_back(bit_string.unused_bits());
