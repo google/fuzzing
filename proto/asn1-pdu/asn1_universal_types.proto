@@ -23,6 +23,12 @@ import "google/protobuf/timestamp.proto";
 
 package asn1_universal_types;
 
+// This represents an ASN.1 Boolean, which takes on the value true or false
+// (X.690 (2015), 8.2).
+message Boolean {
+  required bool val = 1;
+}
+
 // This represents an ASN.1 BIT STRING, which denotes an arbitrary string of
 // bits (X.690 (2015), 8.6).
 message BitString {

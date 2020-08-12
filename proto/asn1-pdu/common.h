@@ -27,9 +27,12 @@ constexpr uint8_t kAsn1Application = 0x40u;
 constexpr uint8_t kAsn1ContextSpecific = 0x80u;
 constexpr uint8_t kAsn1Private = 0xc0u;
 
+// Boolean is UNIVERSAL 1 (X.680 (2015), 8.6, Table 1) and is always primitive
+// (X.690 (2015), 8.2.1).
+constexpr uint8_t kAsn1Boolean = kAsn1Universal | 0x01u;
 // Integer is UNIVERSAL 2 (X.680 (2015), 8.6, Table 1) and is always primitive
 // (X.690 (2015), 8.3.1).
-constexpr uint8_t kAsn1Integer = kAsn1Universal | 0x2u;
+constexpr uint8_t kAsn1Integer = kAsn1Universal | 0x02u;
 // Bitstring is UNIVERSAL 3 (X.680 (2015), 8.6, Table 1) and is always
 // primitive in DER (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1Bitstring = kAsn1Universal | 0x03u;
