@@ -39,9 +39,8 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 }
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
-  // Save the current size in |tag_len_pos| to place tag and length
-  // after the value is encoded.
-  const size_t tag_len_pos = der.size();
+  der.push_back(kAsn1Integer);                                // Tag
+  der.push_back(std::min<uint8_t>(1, integer.val().size()));  // Length
 
   if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
@@ -49,14 +48,11 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
     // Cannot have an empty integer, so use the value 0.
     der.push_back(0x00);
   }
-
-  EncodeTagAndLength(kAsn1Integer, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
-  // Save the current size in |tag_len_pos| to place tag and length
-  // after the value is encoded.
-  const size_t tag_len_pos = der.size();
+  der.push_back(kAsn1Bitstring);               // Tag
+  der.push_back(bit_string.val().size() + 1);  // Length
 
   if (!bit_string.val().empty()) {
     der.push_back(bit_string.unused_bits());
@@ -66,9 +62,6 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
     // and the initial octet shall be zero (X.690 (2015), 8.6.2.3).
     der.push_back(0x00);
   }
-
-  EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos,
-                     der);
 }
 
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
@@ -76,7 +69,7 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  EncodeTimestamp(utc_time.time_stamp(), 13, der);
+  EncodeTimestamp(utc_time.time_stamp(), false, der);
 
   // Check if encoding was successful.
   if (der.size() != tag_len_pos) {
@@ -91,7 +84,7 @@ void Encode(const GeneralizedTime& generalized_time,
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  EncodeTimestamp(generalized_time.time_stamp(), 15, der);
+  EncodeTimestamp(generalized_time.time_stamp(), true, der);
 
   // Check if encoding was successful.
   if (der.size() != tag_len_pos) {
