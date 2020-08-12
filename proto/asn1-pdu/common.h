@@ -36,6 +36,9 @@ constexpr uint8_t kAsn1Integer = kAsn1Universal | 0x02u;
 // Bitstring is UNIVERSAL 3 (X.680 (2015), 8.6, Table 1) and is always
 // primitive in DER (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1Bitstring = kAsn1Universal | 0x03u;
+// ObjectIdentifier is UNIVERSAL 6 (X.680 (2015), 8.6, Table 1) and is always primitive
+// (X.690 (2015), 8.19.1).
+constexpr uint8_t kAsn1ObjectIdentifier = kAsn1Universal | 0x06u;
 // UTCTime has tag number 23 (X.680 (2015), 8.6, Table 1) and is always
 // primitive in DER encoding (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1UTCTime = kAsn1Universal | 0x17u;

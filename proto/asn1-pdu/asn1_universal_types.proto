@@ -67,3 +67,63 @@ message UTCTime {
 message GeneralizedTime {
   required google.protobuf.Timestamp time_stamp = 1;
 }
+
+// This represents an ASN.1 ObjectIdentifier (X.690 (2015), 8.19).
+message ObjectIdentifier {
+  required RootNode root = 1;
+  required SmallIdentifier small_identifier = 2;
+  // The contents octets shall be an (ordered) list of encodings of
+  // subidentifiers (X.690 (2015), 8.19.2-4).
+  repeated uint32 subidentifier = 4;
+}
+
+// (X.690 (2015) 8.19.4): Only three values are allocated from the root node.
+enum RootNode {
+  RN_VAL_0 = 1;
+  RN_VAL_1 = 2;
+  RN_VAL_2 = 3;
+}
+
+// 8.19.4 At most 39 subsequent values from nodes reached by X = 0 and X = 1.
+enum SmallIdentifier {
+  SI_VAL_0 = 0;
+  SI_VAL_1 = 1;
+  SI_VAL_2 = 2;
+  SI_VAL_3 = 3;
+  SI_VAL_4 = 4;
+  SI_VAL_5 = 5;
+  SI_VAL_6 = 6;
+  SI_VAL_7 = 7;
+  SI_VAL_8 = 8;
+  SI_VAL_9 = 9;
+  SI_VAL_10 = 10;
+  SI_VAL_11 = 11;
+  SI_VAL_12 = 12;
+  SI_VAL_13 = 13;
+  SI_VAL_14 = 14;
+  SI_VAL_15 = 15;
+  SI_VAL_16 = 16;
+  SI_VAL_17 = 17;
+  SI_VAL_18 = 18;
+  SI_VAL_19 = 19;
+  SI_VAL_20 = 20;
+  SI_VAL_21 = 21;
+  SI_VAL_22 = 22;
+  SI_VAL_23 = 23;
+  SI_VAL_24 = 24;
+  SI_VAL_25 = 25;
+  SI_VAL_26 = 26;
+  SI_VAL_27 = 27;
+  SI_VAL_28 = 28;
+  SI_VAL_29 = 29;
+  SI_VAL_30 = 30;
+  SI_VAL_31 = 31;
+  SI_VAL_32 = 32;
+  SI_VAL_33 = 33;
+  SI_VAL_34 = 34;
+  SI_VAL_35 = 35;
+  SI_VAL_36 = 36;
+  SI_VAL_37 = 37;
+  SI_VAL_38 = 38;
+  SI_VAL_39 = 39;
+}

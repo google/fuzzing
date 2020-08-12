@@ -67,6 +67,39 @@ void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
   }
 }
 
+void Encode(const ObjectIdentifier& object_identifier,
+            std::vector<uint8_t>& der) {
+  // Save the current size in |tag_len_pos| to place tag and length
+  // after the value is encoded.
+  const size_t tag_len_pos = der.size();
+
+  uint8_t root = object_identifier.root();
+  uint8_t small_identifier = object_identifier.small_identifier();
+  auto subidentifier = object_identifier.subidentifier();
+
+  // (X.690 (2015) 8.19.4): Only 39 subsequent values from nodes reached by X =
+  // 0 and X = 1. Therefore, use |small_identifier| for |root| 0 or 1, and when
+  // |root| is 2, use first integer in |subidentifier| to obtain
+  // potentially higher values.
+  size_t identifier = (root == 2 && !subidentifier.empty())
+                          ? (root * 40) + subidentifier[0]
+                          : (root * 40) + small_identifier;
+  der.push_back(identifier);
+
+  if (!subidentifier.empty()) {
+    for (uint32_t value : subidentifier) {
+      // The subidentifier is base 128 encoded (X.690 (2015), 8.19.2).
+      InsertVariableIntBase128(value, der.size(), der);
+    }
+  } else {
+    // Cannot have an empty integer, so use the value 0.
+    der.push_back(0x00);
+  }
+
+  EncodeTagAndLength(kAsn1ObjectIdentifier, der.size() - tag_len_pos,
+                     tag_len_pos, der);
+}
+
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
   // Save the current size in |tag_len_pos| to place tag and length
   // after the value is encoded.
