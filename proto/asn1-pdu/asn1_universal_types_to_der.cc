@@ -41,8 +41,9 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 }
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
-  EncodeTagAndLength(kAsn1Integer, der.size(),
-                     std::min<size_t>(0x01u, integer.val().size()), der);
+  EncodeTagAndLength(kAsn1Integer,
+                     std::min<size_t>(0x01u, integer.val().size()), der.size(),
+                     der);
 
   if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
@@ -53,7 +54,7 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
 }
 
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
-  EncodeTagAndLength(kAsn1Bitstring, der.size(), bit_string.val().size() + 1,
+  EncodeTagAndLength(kAsn1Bitstring, bit_string.val().size() + 1, der.size(),
                      der);
 
   if (!bit_string.val().empty()) {
