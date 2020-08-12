@@ -29,7 +29,7 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
   const size_t tag_len_pos = der.size();
 
   // The contents octets shall consist of a single octet (X.690 (2015), 8.2.1).
-  if (bool.val()) {
+  if (boolean.val()) {
     // If the boolean value is TRUE the octet shall have any non-zero value, as
     // a sender's option (X.690 (2015), 8.2.2).
     der.push_back(0xFF);
