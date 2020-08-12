@@ -24,9 +24,10 @@
 namespace asn1_universal_types {
 
 void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
+  der.push_back(kAsn1Boolean);
   // The contents octets shall consist of a single octet (X.690 (2015), 8.2.1).
   // Therefore, length is always 1.
-  EncodeTagAndLength(kAsn1Boolean, der.size(), 1u, der);  // Length is always 1
+  der.push_back(0x01);
 
   if (boolean.val()) {
     // If the boolean value is TRUE, the octet shall have any non-zero value
@@ -41,7 +42,7 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
   EncodeTagAndLength(kAsn1Integer, der.size(),
-                     std::min<uint8_t>(1u, integer.val().size()), der);
+                     std::min<uint8_t>(0x01, integer.val().size()), der);
 
   if (!integer.val().empty()) {
     der.insert(der.end(), integer.val().begin(), integer.val().end());
