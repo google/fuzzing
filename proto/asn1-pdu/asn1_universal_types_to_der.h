@@ -37,6 +37,11 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der);
 // Appends encoded |bit_string| to |der|.
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der);
 
+// DER encodes |object_identifier| according to X.690 (2015), 8.19.
+// Appends encoded |object_identifier| to |der|.
+void Encode(const ObjectIdentifier& object_identifier,
+            std::vector<uint8_t>& der);
+
 // DER encodes |utc_time| according to X.690 (2015), 11.8.
 // Appends encoded |utc_time| to |der|.
 void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der);
