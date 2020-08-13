@@ -67,7 +67,7 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifierSequence) {
     Encode(val.authority_cert_serial_number(), der);
     // |authority_cert_serial_number| is Context-specific with tag number 2 (RFC
     // 5280, 4.2.1.1).
-    ReplaceTag(kAsn1ContextSpecific | 0x2, pos_of_tag, der);
+    ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
 
   // The fields of an AuthorityKeyIdentifier are wrapped around a sequence (RFC
