@@ -97,7 +97,7 @@ void Encode(const ObjectIdentifier& object_identifier,
   }
   InsertVariableIntBase128(identifier, der.size(), der);
 
-  for (auto value : subidentifier) {
+  for (const auto& value : subidentifier) {
     // The subidentifier is base 128 encoded (X.690 (2015), 8.19.2).
     InsertVariableIntBase128(value, der.size(), der);
   }
