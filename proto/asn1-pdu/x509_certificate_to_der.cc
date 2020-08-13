@@ -49,13 +49,25 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifierSequence) {
   size_t tag_len_pos = der.size();
 
   if (val.has_key_identifier()) {
+    size_t pos_of_tag = der.size();
     Encode(val.key_identifier(), der);
+    // |key_identifier| is Context-specific with tag number 0 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific, pos_of_tag, der);
   }
   if (val.has_authority_cert_issuer()) {
+    size_t pos_of_tag = der.size();
     Encode(val.authority_cert_issuer(), der);
+    // |authority_cert_issuer| is Context-specific with tag number 1 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific | 0x01, pos_of_tag, der);
   }
   if (val.has_authority_cert_serial_number()) {
+    size_t pos_of_tag = der.size();
     Encode(val.authority_cert_serial_number(), der);
+    // |authority_cert_serial_number| is Context-specific with tag number 2 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific | 0x2, pos_of_tag, der);
   }
 
   // The fields of an AuthorityKeyIdentifier are wrapped around a sequence (RFC
@@ -69,7 +81,7 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
   if (val.has_object_identifier()) {
     Encode(val.object_identifier(), der);
   } else {
-    // RFC 5280, 4.2.1 & A.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
+    // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
     std::vector<uint8_t> aki_id = {(2 * 40) + 5, 29, 35};
     der.insert(der.end(), aki_id.begin(), aki_id.end());
   }
@@ -144,7 +156,7 @@ DECLARE_ENCODE_FUNCTION(VersionNumber) {
   // |version| is Context-specific with tag number 0 (RFC 5280, 4.1 & 4.1.2.1).
   // Takes on values 0, 1 and 2, so only require length of 1 to
   // encode it (RFC 5280, 4.1 & 4.1.2.1).
-  std::vector<uint8_t> der_version = {kAsn1Constructed, 0x01,
+  std::vector<uint8_t> der_version = {kAsn1ContextSpecific, 0x01,
                                       static_cast<uint8_t>(val)};
   der.insert(der.end(), der_version.begin(), der_version.end());
 }

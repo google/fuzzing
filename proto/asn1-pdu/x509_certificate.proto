@@ -170,7 +170,7 @@ message RawExtension {
   required asn1_universal_types.OctetString octet_string = 3;
 }
 
-// See RFC 5280, A.1.
+// See RFC 5280, 4.2.1.1.
 message AuthorityKeyIdentifier {
   // If present use arbitrary OID; otherwise, use OID in spec.
   optional asn1_universal_types.ObjectIdentifier object_identifier = 1;
@@ -178,7 +178,7 @@ message AuthorityKeyIdentifier {
   required AuthorityKeyIdentifierSequence aki_sequence = 3;
 }
 
-// See RFC 5280, A.1.
+// See RFC 5280, 4.2.1.1.
 message AuthorityKeyIdentifierSequence {
   optional asn1_universal_types.OctetString key_identifier = 1;
   optional asn1_pdu.PDU authority_cert_issuer = 2;
