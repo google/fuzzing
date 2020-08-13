@@ -57,8 +57,8 @@ void Encode(const OctetString& octet_string, std::vector<uint8_t>& der) {
   EncodeTagAndLength(kAsn1OctetString, octet_string.val().size(), der.size(),
                      der);
 
-  // X.690 (2015), 8.7.3: The contents octets for the constructed encoding shall
-  // consist of zero, one, or more encodings.
+  // X.690 (2015), 8.7.2: The primitive encoding contains zero, one or more
+  // contents octets.
   der.insert(der.end(), octet_string.val().begin(), octet_string.val().end());
 }
 

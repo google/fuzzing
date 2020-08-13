@@ -137,7 +137,7 @@ message UniqueIdentifier {
 message Extension {
   // RFC 5280 4.2.1.1 & 4.2.1.2: Extensions such as |AuthorityKeyIdentifier| and
   // |SubjectKeyIdentifier| must be marked as non-critical by the CA. However,
-  // allow it to potentially be true to generate interesting inputs.
+  // allow it to be true to generate interesting inputs.
   required asn1_universal_types.Boolean critical = 1;
   oneof types {
     RawExtension raw_extension = 2;
@@ -149,6 +149,7 @@ message Extension {
 // See RFC 5280, 4.1 & 4.1.2.9.
 message RawExtension {
   required asn1_universal_types.ObjectIdentifier object_identifier = 1;
+  // If present, use |pdu| as the value instead of |octet_string|.
   optional asn1_pdu.PDU pdu = 2;
   required asn1_universal_types.OctetString octet_string = 3;
 }

@@ -107,11 +107,9 @@ std::vector<uint8_t> GetOIDForExtension(const Extension& val) {
       Encode(val.raw_extension().object_identifier(), encoded_oid);
     case Extension::TypesCase::kAuthorityKeyIdentifier:
       // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
-      // Need not base128 encode, since all numbers are less than 128.
       encoded_oid = {(2 * 40) + 5, 29, 35};
     case Extension::TypesCase::kSubjectKeyIdentifier:
       // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
-      // Need not base128 encode, since all numbers are less than 128.
       encoded_oid = {(2 * 40) + 5, 29, 14};
     case Extension::TypesCase::TYPES_NOT_SET:
       encoded_oid = {};
@@ -121,14 +119,14 @@ std::vector<uint8_t> GetOIDForExtension(const Extension& val) {
 
 DECLARE_ENCODE_FUNCTION(Extension) {
   std::vector<uint8_t> encoded_oid = GetOIDForExtension(val);
-  // When oneof is not set, don't encode |Extension|.
+  // Do not encode when |Extension| oneof is not set.
   if (encoded_oid.empty()) {
     return;
   }
 
   der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
 
-  // RFC 5280, 4.1: |critical| is DEFAULT false. Furthermore,
+  // RFC 5280, 4.1: |critical| is DEFAULT FALSE. Furthermore,
   // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
   if (val.critical().val()) {
     Encode(val.critical(), der);
@@ -225,7 +223,7 @@ DECLARE_ENCODE_FUNCTION(TBSCertificateSequence) {
   }
   if (!val.extensions().empty()) {
     size_t pos_of_tag = der.size();
-    // RFC 5280, 4.1: Extensions, if present, is made up one one ore more
+    // RFC 5280, 4.1: Extensions, if present, is made up of one or more
     // Extension.
     for (auto extension : val.extensions()) {
       Encode(extension, der);
