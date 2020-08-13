@@ -29,6 +29,12 @@ message Boolean {
   required bool val = 1;
 }
 
+// This represents an ASN.1 OCTET STRING, which denotes an arbitrary string of
+// bits (X.690 (2015), 8.7).
+message OctetString {
+  required bytes val = 1;
+}
+
 // This represents an ASN.1 BIT STRING, which denotes an arbitrary string of
 // bits (X.690 (2015), 8.6).
 message BitString {

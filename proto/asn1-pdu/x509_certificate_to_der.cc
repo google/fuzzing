@@ -43,6 +43,64 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
+DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifierSequence) {
+  // // Save the current size in |tag_len_pos| to place sequence tag and length
+  // // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
+  if (val.has_key_identifier()) {
+    Encode(val.key_identifier(), der);
+  }
+  if (val.has_authority_cert_issuer()) {
+    Encode(val.authority_cert_issuer(), der);
+  }
+  if (val.has_authority_cert_serial_number()) {
+    Encode(val.authority_cert_serial_number(), der);
+  }
+
+  // The fields of an AuthorityKeyIdentifier are wrapped around a sequence (RFC
+  // 5280, 4.2.1.1).
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the value of |AuthorityKeyIdentifierSequence|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
+DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
+  if (val.has_object_identifier()) {
+    Encode(val.object_identifier(), der);
+  } else {
+    // RFC 5280, 4.2.1 & A.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
+    std::vector<uint8_t> aki_id = {(2 * 40) + 5, 29, 35};
+    der.insert(der.end(), aki_id.begin(), aki_id.end());
+  }
+  Encode(val.critical(), der);
+  Encode(val.aki_sequence(), der);
+}
+
+DECLARE_ENCODE_FUNCTION(RawExtension) {
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
+  Encode(val.object_identifier(), der);
+  Encode(val.critical(), der);
+  Encode(val.octet_string(), der);
+
+  // The fields of an Extension are wrapped around a sequence (RFC
+  // 5280, 4.1 & 4.1.2.9).
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the value of |RawExtension|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
+DECLARE_ENCODE_FUNCTION(Extension) {
+  if (val.has_raw_extension()) {
+    Encode(val.raw_extension(), der);
+  } else if (val.has_authority_key_identifier()) {
+    Encode(val.authority_key_identifier(), der);
+  }
+}
+
 DECLARE_ENCODE_FUNCTION(SubjectPublicKeyInfoSequence) {
   // Save the current size in |tag_len_pos| to place sequence tag and length
   // after the value is encoded.
@@ -122,9 +180,13 @@ DECLARE_ENCODE_FUNCTION(TBSCertificateSequence) {
     // & 4.1.2.8).
     ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
-  if (val.has_extensions()) {
+  if (!val.extensions().empty()) {
     size_t pos_of_tag = der.size();
-    Encode(val.extensions(), der);
+    // RFC 5280, 4.1: Extensions, if present, is made up one one ore more
+    // Extension.
+    for (auto extension : val.extensions()) {
+      Encode(extension, der);
+    }
     // |extensions| is Context-specific with tag number 3 (RFC 5280, 4.1
     // & 4.1.2.8).
     ReplaceTag(kAsn1ContextSpecific | 0x03, pos_of_tag, der);
