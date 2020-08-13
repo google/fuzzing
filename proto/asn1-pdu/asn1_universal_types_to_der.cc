@@ -81,19 +81,16 @@ void Encode(const ObjectIdentifier& object_identifier,
   // 0 and X = 1. Therefore, use |small_identifier| for |root| 0 or 1, and when
   // |root| is 2, use first integer in |subidentifier| to obtain
   // potentially higher values.
-  size_t identifier = (root == 2 && !subidentifier.empty())
-                          ? (root * 40) + subidentifier[0]
-                          : (root * 40) + small_identifier;
-  der.push_back(identifier);
+  size_t identifier = (root * 40) + small_identifier;
+  if (root == 2 && !subidentifier.empty()) {
+    identifier += *subidentifier.rbegin();
+    subidentifier.RemoveLast();
+  }
+  InsertVariableIntBase128(identifier, der.size(), der);
 
-  if (!subidentifier.empty()) {
-    for (uint32_t value : subidentifier) {
-      // The subidentifier is base 128 encoded (X.690 (2015), 8.19.2).
-      InsertVariableIntBase128(value, der.size(), der);
-    }
-  } else {
-    // Cannot have an empty integer, so use the value 0.
-    der.push_back(0x00);
+  for (auto value : subidentifier) {
+    // The subidentifier is base 128 encoded (X.690 (2015), 8.19.2).
+    InsertVariableIntBase128(value, der.size(), der);
   }
 
   EncodeTagAndLength(kAsn1ObjectIdentifier, der.size() - tag_len_pos,
