@@ -57,7 +57,7 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
     Encode(val.key_identifier(), der);
     // |key_identifier| is Context-specific with tag number 0 (RFC
     // 5280, 4.2.1.1).
-    ReplaceTag(kAsn1ContextSpecific, pos_of_tag, der);
+    ReplaceTag(kAsn1ContextSpecific | 0x00, pos_of_tag, der);
   }
   if (val.has_authority_cert_issuer()) {
     size_t pos_of_tag = der.size();
@@ -90,7 +90,7 @@ DECLARE_ENCODE_FUNCTION(RawExtension) {
     EncodeTagAndLength(kAsn1OctetString, der.size() - tag_len_pos, tag_len_pos,
                        der);
   } else {
-    Encode(val.octet_string(), der);
+    Encode(val.extn_value(), der);
   }
 
   // The fields of an Extension are wrapped around a sequence (RFC
@@ -100,45 +100,65 @@ DECLARE_ENCODE_FUNCTION(RawExtension) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
-std::vector<uint8_t> GetOIDForExtension(const Extension& val) {
-  std::vector<uint8_t> encoded_oid;
+void EncodeExtensionValue(const Extension& val, std::vector<uint8_t>& der) {
   switch (val.types_case()) {
-    case Extension::TypesCase::kRawExtension:
-      Encode(val.raw_extension().object_identifier(), encoded_oid);
     case Extension::TypesCase::kAuthorityKeyIdentifier:
-      // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
-      encoded_oid = {(2 * 40) + 5, 29, 35};
+      Encode(val.authority_key_identifier(), der);
+      break;
     case Extension::TypesCase::kSubjectKeyIdentifier:
-      // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
-      encoded_oid = {(2 * 40) + 5, 29, 14};
+      Encode(val.subject_key_identifier(), der);
+      break;
     case Extension::TypesCase::TYPES_NOT_SET:
-      encoded_oid = {};
+      Encode(val.raw_extension(), der);
+      break;
   }
-  return encoded_oid;
 }
 
-DECLARE_ENCODE_FUNCTION(Extension) {
-  std::vector<uint8_t> encoded_oid = GetOIDForExtension(val);
-  // Do not encode when |Extension| oneof is not set.
-  if (encoded_oid.empty()) {
+void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
+  if (val.has_extn_id()) {
+    Encode(val.extn_id(), der);
     return;
   }
 
-  der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
+  std::vector<uint8_t> encoded_oid;
+  switch (val.types_case()) {
+    case Extension::TypesCase::kAuthorityKeyIdentifier:
+      // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
+      encoded_oid = {(2 * 40) + 5, 29, 35};
+      break;
+    case Extension::TypesCase::kSubjectKeyIdentifier:
+      // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
+      encoded_oid = {(2 * 40) + 5, 29, 14};
+      break;
+    case Extension::TypesCase::TYPES_NOT_SET:
+      encoded_oid = {};
+      break;
+  }
 
-  // RFC 5280, 4.1: |critical| is DEFAULT FALSE. Furthermore,
+  if (!encoded_oid.empty()) {
+    der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
+    return;
+  }
+
+  Encode(val.raw_extension().extn_id(), der);
+}
+
+DECLARE_ENCODE_FUNCTION(Extension) {
+  EncodeExtensionID(val, der);
+
+  // RFC 5280, 4.1: |critical| is DEFAULT false. Furthermore,
   // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
   if (val.critical().val()) {
     Encode(val.critical(), der);
   }
 
-  switch (val.types_case()) {
-    case Extension::TypesCase::kAuthorityKeyIdentifier:
-      Encode(val.authority_key_identifier(), der);
-    case Extension::TypesCase::kSubjectKeyIdentifier:
-      Encode(val.subject_key_identifier(), der);
-    default:
-      Encode(val.raw_extension(), der);
+  EncodeExtensionValue(val, der);
+}
+
+DECLARE_ENCODE_FUNCTION(ExtensionSequence) {
+  Encode(val.extension(), der);
+  for (const auto& extension : val.extensions()) {
+    Encode(extension, der);
   }
 }
 
@@ -185,7 +205,7 @@ DECLARE_ENCODE_FUNCTION(VersionNumber) {
   // |version| is Context-specific with tag number 0 (RFC 5280, 4.1 & 4.1.2.1).
   // Takes on values 0, 1 and 2, so only require length of 1 to
   // encode it (RFC 5280, 4.1 & 4.1.2.1).
-  std::vector<uint8_t> der_version = {kAsn1ContextSpecific, 0x01,
+  std::vector<uint8_t> der_version = {kAsn1ContextSpecific | 0x00, 0x01,
                                       static_cast<uint8_t>(val)};
   der.insert(der.end(), der_version.begin(), der_version.end());
 }
@@ -221,13 +241,9 @@ DECLARE_ENCODE_FUNCTION(TBSCertificateSequence) {
     // & 4.1.2.8).
     ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
-  if (!val.extensions().empty()) {
+  if (val.has_extensions()) {
     size_t pos_of_tag = der.size();
-    // RFC 5280, 4.1: Extensions, if present, is made up of one or more
-    // Extension.
-    for (auto extension : val.extensions()) {
-      Encode(extension, der);
-    }
+    Encode(val.extensions(), der);
     // |extensions| is Context-specific with tag number 3 (RFC 5280, 4.1
     // & 4.1.2.8).
     ReplaceTag(kAsn1ContextSpecific | 0x03, pos_of_tag, der);
