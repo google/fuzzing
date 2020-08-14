@@ -135,6 +135,7 @@ message UniqueIdentifier {
 }
 
 message Extensions {
+  // If |pdu| is present, encode |Extensions| as an arbitraty pdu.
   optional asn1_pdu.PDU pdu = 1;
   required ExtensionSequence value = 2;
 }

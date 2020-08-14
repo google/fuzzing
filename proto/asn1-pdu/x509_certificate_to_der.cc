@@ -48,10 +48,6 @@ DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
 }
 
 DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
-  // Save the current size in |tag_len_pos| to place sequence tag and length
-  // after the value is encoded.
-  size_t tag_len_pos = der.size();
-
   if (val.has_key_identifier()) {
     size_t pos_of_tag = der.size();
     Encode(val.key_identifier(), der);
@@ -73,18 +69,9 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
     // 5280, 4.2.1.1).
     ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
-
-  // The fields of an AuthorityKeyIdentifier are wrapped around a sequence (RFC
-  // 5280, 4.2.1.1). The current size of |der| subtracted by |tag_len_pos|
-  // equates to the size of the value of |AuthorityKeyIdentifierSequence|.
-  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(RawExtension) {
-  // Save the current size in |tag_len_pos| to place octet string and
-  // sequence tag and length after the value is encoded.
-  size_t tag_len_pos = der.size();
-
   if (val.has_pdu()) {
     Encode(val.pdu(), der);
     EncodeTagAndLength(kAsn1OctetString, der.size() - tag_len_pos, tag_len_pos,
@@ -92,12 +79,6 @@ DECLARE_ENCODE_FUNCTION(RawExtension) {
   } else {
     Encode(val.extn_value(), der);
   }
-
-  // The fields of an Extension are wrapped around a sequence (RFC
-  // 5280, 4.1 & 4.1.2.9).
-  // The current size of |der| subtracted by |tag_len_pos|
-  // equates to the size of the value of |RawExtension|.
-  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 void EncodeExtensionValue(const Extension& val, std::vector<uint8_t>& der) {
@@ -144,6 +125,10 @@ void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
 }
 
 DECLARE_ENCODE_FUNCTION(Extension) {
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
   EncodeExtensionID(val, der);
 
   // RFC 5280, 4.1: |critical| is DEFAULT false. Furthermore,
@@ -153,6 +138,11 @@ DECLARE_ENCODE_FUNCTION(Extension) {
   }
 
   EncodeExtensionValue(val, der);
+
+  // The fields of an |Extension| are wrapped around a sequence (RFC 5280, 4.1).
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the |Extension|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(ExtensionSequence) {
