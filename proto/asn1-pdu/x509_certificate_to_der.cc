@@ -73,6 +73,9 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
 
 DECLARE_ENCODE_FUNCTION(RawExtension) {
   if (val.has_pdu()) {
+    // Save the current size in |tag_len_pos| to place octet string tag and
+    // length after the value is encoded.
+    size_t tag_len_pos = der.size();
     Encode(val.pdu(), der);
     EncodeTagAndLength(kAsn1OctetString, der.size() - tag_len_pos, tag_len_pos,
                        der);
@@ -112,16 +115,11 @@ void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
       encoded_oid = {(2 * 40) + 5, 29, 14};
       break;
     case Extension::TypesCase::TYPES_NOT_SET:
-      encoded_oid = {};
-      break;
+      Encode(val.raw_extension().extn_id(), der);
+      return;
   }
 
-  if (!encoded_oid.empty()) {
-    der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
-    return;
-  }
-
-  Encode(val.raw_extension().extn_id(), der);
+  der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
 }
 
 DECLARE_ENCODE_FUNCTION(Extension) {
