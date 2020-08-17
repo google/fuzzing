@@ -165,6 +165,9 @@ message Extension {
   oneof types {
     AuthorityKeyIdentifier authority_key_identifier = 4;
     SubjectKeyIdentifier subject_key_identifier = 5;
+    KeyUsage key_usage = 6;
+    BasicConstraints basic_constraints = 7;
+    ExtendedKeyUsage extended_key_usage = 8;
   }
 }
 
@@ -188,10 +191,29 @@ message SubjectKeyIdentifier {
   required asn1_universal_types.OctetString key_identifier = 1;
 }
 
+// See RFC 5280, 4.2.1.3.
+message KeyUsage {
+  required bool digital_signature = 1;
+  required bool non_repudation = 2;
+  required bool key_encipherment = 3;
+  required bool data_encipherment = 4;
+  required bool key_agreement = 5;
+  required bool key_cert_sign = 6;
+  required bool crl_sign = 7;
+  required bool encipher_only = 8;
+  required bool decipher_only = 9;
+}
+
 // See RFC 5280, 4.2.1.9.
 message BasicConstraints {
-  required asn1_universal_types.Boolean cA = 1;
+  required asn1_universal_types.Boolean ca = 1;
   optional asn1_universal_types.Integer path_len_constraint = 2;
+}
+
+// See RFC 5280, 4.2.1.12.
+message ExtendedKeyUsage {
+  required asn1_universal_types.ObjectIdentifier key_purpose_id = 1;
+  repeated asn1_universal_types.ObjectIdentifier key_purpose_ids = 2;
 }
 
 // See RFC 5280, 4.1 & 4.1.1.2.

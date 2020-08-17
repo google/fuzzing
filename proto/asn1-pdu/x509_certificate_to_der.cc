@@ -43,10 +43,42 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
-DECLARE_ENCODE_FUNCTION(BasicConstraints) {
-  if(val.cA().val()) {
-    Encode(val.cA());
+DECLARE_ENCODE_FUNCTION(ExtendedKeyUsage) {
+  Encode(val.key_purpose_id(), der);
+  for (const auto& key_purpose_id : val.key_purpose_ids()) {
+    Encode(key_purpose_id, der);
   }
+}
+
+DECLARE_ENCODE_FUNCTION(BasicConstraints) {
+  if (val.ca().val()) {
+    Encode(val.ca(), der);
+  }
+  if (val.has_path_len_constraint()) {
+    Encode(val.path_len_constraint(), der);
+  }
+}
+
+DECLARE_ENCODE_FUNCTION(KeyUsage) {
+  uint16_t key_usage = 0x00;
+  auto masks = {val.digital_signature() ? 0x01 : 0x00,
+                val.digital_signature() ? 0x02 : 0x00,
+                val.digital_signature() ? 0x04 : 0x00,
+                val.digital_signature() ? 0x08 : 0x00,
+                val.digital_signature() ? 0x10 : 0x00,
+                val.digital_signature() ? 0x20 : 0x00,
+                val.digital_signature() ? 0x40 : 0x00,
+                val.digital_signature() ? 0x80 : 0x00,
+                val.digital_signature() ? 0x100 : 0x00};
+  for (const auto mask : masks) {
+    key_usage |= mask;
+  }
+  // Save the current size in |tag_len_pos| to place BitString tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+  InsertVariableIntBase256(key_usage, der.size(), der);
+  EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos,
+                     der);
 }
 
 DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
@@ -98,6 +130,15 @@ void EncodeExtensionValue(const Extension& val, std::vector<uint8_t>& der) {
     case Extension::TypesCase::kSubjectKeyIdentifier:
       Encode(val.subject_key_identifier(), der);
       break;
+    case Extension::TypesCase::kBasicConstraints:
+      Encode(val.basic_constraints(), der);
+      break;
+    case Extension::TypesCase::kExtendedKeyUsage:
+      Encode(val.extended_key_usage(), der);
+      break;
+    case Extension::TypesCase::kKeyUsage:
+      Encode(val.key_usage(), der);
+      break;
     case Extension::TypesCase::TYPES_NOT_SET:
       Encode(val.raw_extension(), der);
       break;
@@ -119,6 +160,18 @@ void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
     case Extension::TypesCase::kSubjectKeyIdentifier:
       // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
       encoded_oid = {(2 * 40) + 5, 29, 14};
+      break;
+    case Extension::TypesCase::kKeyUsage:
+      // RFC 5280, 4.2.1.3: |KeyUsage| OID is {2 5 29 15}.
+      encoded_oid = {(2 * 40) + 5, 29, 15};
+      break;
+    case Extension::TypesCase::kBasicConstraints:
+      // RFC 5280, 4.2.1.9: |BasicConstraints| OID is {2 5 29 14}.
+      encoded_oid = {(2 * 40) + 5, 29, 19};
+      break;
+    case Extension::TypesCase::kExtendedKeyUsage:
+      // RFC 5280, 4.2.1.12: |ExtendedKeyUsage| OID is {2 5 29 37}.
+      encoded_oid = {(2 * 40) + 5, 29, 37};
       break;
     case Extension::TypesCase::TYPES_NOT_SET:
       Encode(val.raw_extension().extn_id(), der);
