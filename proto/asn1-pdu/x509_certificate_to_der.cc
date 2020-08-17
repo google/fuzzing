@@ -43,6 +43,119 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
+DECLARE_ENCODE_FUNCTION(BasicConstraints) {
+  if(val.cA().val()) {
+    Encode(val.cA());
+  }
+}
+
+DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
+  Encode(val.key_identifier(), der);
+}
+
+DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
+  if (val.has_key_identifier()) {
+    size_t pos_of_tag = der.size();
+    Encode(val.key_identifier(), der);
+    // |key_identifier| is Context-specific with tag number 0 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific | 0x00, pos_of_tag, der);
+  }
+  if (val.has_authority_cert_issuer()) {
+    size_t pos_of_tag = der.size();
+    Encode(val.authority_cert_issuer(), der);
+    // |authority_cert_issuer| is Context-specific with tag number 1 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific | 0x01, pos_of_tag, der);
+  }
+  if (val.has_authority_cert_serial_number()) {
+    size_t pos_of_tag = der.size();
+    Encode(val.authority_cert_serial_number(), der);
+    // |authority_cert_serial_number| is Context-specific with tag number 2 (RFC
+    // 5280, 4.2.1.1).
+    ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
+  }
+}
+
+DECLARE_ENCODE_FUNCTION(RawExtension) {
+  if (val.has_pdu()) {
+    // Save the current size in |tag_len_pos| to place octet string tag and
+    // length after the value is encoded.
+    size_t tag_len_pos = der.size();
+    Encode(val.pdu(), der);
+    EncodeTagAndLength(kAsn1OctetString, der.size() - tag_len_pos, tag_len_pos,
+                       der);
+  } else {
+    Encode(val.extn_value(), der);
+  }
+}
+
+void EncodeExtensionValue(const Extension& val, std::vector<uint8_t>& der) {
+  switch (val.types_case()) {
+    case Extension::TypesCase::kAuthorityKeyIdentifier:
+      Encode(val.authority_key_identifier(), der);
+      break;
+    case Extension::TypesCase::kSubjectKeyIdentifier:
+      Encode(val.subject_key_identifier(), der);
+      break;
+    case Extension::TypesCase::TYPES_NOT_SET:
+      Encode(val.raw_extension(), der);
+      break;
+  }
+}
+
+void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
+  if (val.has_extn_id()) {
+    Encode(val.extn_id(), der);
+    return;
+  }
+
+  std::vector<uint8_t> encoded_oid;
+  switch (val.types_case()) {
+    case Extension::TypesCase::kAuthorityKeyIdentifier:
+      // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier| OID is {2 5 29 35}.
+      encoded_oid = {(2 * 40) + 5, 29, 35};
+      break;
+    case Extension::TypesCase::kSubjectKeyIdentifier:
+      // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
+      encoded_oid = {(2 * 40) + 5, 29, 14};
+      break;
+    case Extension::TypesCase::TYPES_NOT_SET:
+      Encode(val.raw_extension().extn_id(), der);
+      return;
+  }
+
+  der.insert(der.end(), encoded_oid.begin(), encoded_oid.end());
+}
+
+DECLARE_ENCODE_FUNCTION(Extension) {
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
+  EncodeExtensionID(val, der);
+
+  // RFC 5280, 4.1: |critical| is DEFAULT false. Furthermore,
+  // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
+  if (val.critical().val()) {
+    Encode(val.critical(), der);
+  }
+
+  EncodeExtensionValue(val, der);
+
+  // The fields of an |Extension| are wrapped around a sequence (RFC 5280, 4.1).
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the |Extension|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
+DECLARE_ENCODE_FUNCTION(ExtensionSequence) {
+  Encode(val.extension(), der);
+  for (const auto& extension : val.extensions()) {
+    Encode(extension, der);
+  }
+}
+
 DECLARE_ENCODE_FUNCTION(SubjectPublicKeyInfoSequence) {
   // Save the current size in |tag_len_pos| to place sequence tag and length
   // after the value is encoded.
@@ -86,7 +199,7 @@ DECLARE_ENCODE_FUNCTION(VersionNumber) {
   // |version| is Context-specific with tag number 0 (RFC 5280, 4.1 & 4.1.2.1).
   // Takes on values 0, 1 and 2, so only require length of 1 to
   // encode it (RFC 5280, 4.1 & 4.1.2.1).
-  std::vector<uint8_t> der_version = {kAsn1Constructed, 0x01,
+  std::vector<uint8_t> der_version = {kAsn1ContextSpecific | 0x00, 0x01,
                                       static_cast<uint8_t>(val)};
   der.insert(der.end(), der_version.begin(), der_version.end());
 }

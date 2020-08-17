@@ -37,6 +37,10 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der);
 // Appends encoded |bit_string| to |der|.
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der);
 
+// DER encodes |octet_string| according to X.690 (2015), 8.7.
+// Appends encoded |octet_string| to |der|.
+void Encode(const OctetString& octet_string, std::vector<uint8_t>& der);
+
 // DER encodes |object_identifier| according to X.690 (2015), 8.19.
 // Appends encoded |object_identifier| to |der|.
 void Encode(const ObjectIdentifier& object_identifier,

@@ -53,8 +53,17 @@ void Encode(const Integer& integer, std::vector<uint8_t>& der) {
   }
 }
 
+void Encode(const OctetString& octet_string, std::vector<uint8_t>& der) {
+  EncodeTagAndLength(kAsn1OctetString, octet_string.val().size(), der.size(),
+                     der);
+
+  // X.690 (2015), 8.7.2: The primitive encoding contains zero, one or more
+  // contents octets.
+  der.insert(der.end(), octet_string.val().begin(), octet_string.val().end());
+}
+
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
-  EncodeTagAndLength(kAsn1Bitstring, bit_string.val().size() + 1, der.size(),
+  EncodeTagAndLength(kAsn1BitString, bit_string.val().size() + 1, der.size(),
                      der);
 
   if (!bit_string.val().empty()) {
@@ -88,7 +97,7 @@ void Encode(const ObjectIdentifier& object_identifier,
   }
   InsertVariableIntBase128(identifier, der.size(), der);
 
-  for (auto value : subidentifier) {
+  for (const auto& value : subidentifier) {
     // The subidentifier is base 128 encoded (X.690 (2015), 8.19.2).
     InsertVariableIntBase128(value, der.size(), der);
   }

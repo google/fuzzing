@@ -134,13 +134,64 @@ message UniqueIdentifier {
   required asn1_universal_types.BitString value = 2;
 }
 
-// See RFC 5280, 4.1 & 4.1.2.9.
 message Extensions {
   // If |pdu| is present, encode |Extensions| as an arbitraty pdu.
-  required asn1_pdu.PDU pdu = 1;
-  required asn1_pdu.PDU value = 2;
-  // TODO(dhalawi@gmail.com): switch the required
-  // field to encompass a valid |Extensions| value.
+  optional asn1_pdu.PDU pdu = 1;
+  required ExtensionSequence value = 2;
+}
+
+message ExtensionSequence {
+  // RFC 5280, 4.1: Extensions ::= SEQUENCE SIZE (1..MAX) OF Extension.
+  // This ensures that, when not using the raw PDU for Extensions, that there is
+  // at least one Extension present.
+  required Extension extension = 1;
+  repeated Extension extensions = 2;
+}
+
+message Extension {
+  // Use |extn_id| when present for arbitrary OID.
+  // Otherwise, use the correct OID for the extension encoded.
+  optional asn1_universal_types.ObjectIdentifier extn_id = 1;
+  // X.509v3 and profiles of X.509, such as RFC 5280 may specify individual
+  // extensions to always be critical or never be critical in order to conform
+  // with the profile. However, the goal of this protobuf is primarily to
+  // construct valid DER, including DER that may not conform to the profile. To
+  // support this, the criticalness of an extension is shared, rather than taking
+  // an approach like the extension identifier.
+  required asn1_universal_types.Boolean critical = 2;
+  // When |types| is empty use |raw_extension|.
+  // This allows an extension to always be encoded.
+  required RawExtension raw_extension = 3;
+  oneof types {
+    AuthorityKeyIdentifier authority_key_identifier = 4;
+    SubjectKeyIdentifier subject_key_identifier = 5;
+  }
+}
+
+// See RFC 5280, 4.1 & 4.1.2.9.
+message RawExtension {
+  required asn1_universal_types.ObjectIdentifier extn_id = 1;
+  // If present, use |pdu| as the value instead of |extn_value|.
+  optional asn1_pdu.PDU pdu = 2;
+  required asn1_universal_types.OctetString extn_value = 3;
+}
+
+// See RFC 5280, 4.2.1.1.
+message AuthorityKeyIdentifier {
+  optional asn1_universal_types.OctetString key_identifier = 1;
+  optional asn1_pdu.PDU authority_cert_issuer = 2;
+  optional asn1_pdu.PDU authority_cert_serial_number = 3;
+}
+
+// See RFC 5280, 4.2.1.2.
+message SubjectKeyIdentifier {
+  required asn1_universal_types.OctetString key_identifier = 1;
+}
+
+// See RFC 5280, 4.2.1.9.
+message BasicConstraints {
+  required asn1_universal_types.Boolean cA = 1;
+  optional asn1_universal_types.Integer path_len_constraint = 2;
 }
 
 // See RFC 5280, 4.1 & 4.1.1.2.
