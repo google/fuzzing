@@ -188,6 +188,12 @@ message SubjectKeyIdentifier {
   required asn1_universal_types.OctetString key_identifier = 1;
 }
 
+// See RFC 5280, 4.2.1.9.
+message BasicConstraints {
+  required asn1_universal_types.Boolean cA = 1;
+  optional asn1_universal_types.Integer path_len_constraint = 2;
+}
+
 // See RFC 5280, 4.1 & 4.1.1.2.
 message SignatureAlgorithm {
   // If |pdu| is present, encode |SignatureAlgorithm| as an arbitraty pdu.

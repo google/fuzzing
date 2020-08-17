@@ -35,7 +35,7 @@ constexpr uint8_t kAsn1Boolean = kAsn1Universal | 0x01u;
 constexpr uint8_t kAsn1Integer = kAsn1Universal | 0x02u;
 // BitString is UNIVERSAL 3 (X.680 (2015), 8.6, Table 1) and is always
 // primitive in DER (X.690 (2015), 10.2).
-constexpr uint8_t kAsn1Bitstring = kAsn1Universal | 0x03u;
+constexpr uint8_t kAsn1BitString = kAsn1Universal | 0x03u;
 // OctetString is UNIVERSAL 4 (X.680 (2015), 8.6, Table 1) and is always
 // primitive primitive in DER (X.690 (2015), 10.2).
 constexpr uint8_t kAsn1OctetString = kAsn1Universal | 0x04u;

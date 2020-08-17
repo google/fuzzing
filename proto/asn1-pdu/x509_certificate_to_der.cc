@@ -43,6 +43,12 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
+DECLARE_ENCODE_FUNCTION(BasicConstraints) {
+  if(val.cA().val()) {
+    Encode(val.cA());
+  }
+}
+
 DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
   Encode(val.key_identifier(), der);
 }

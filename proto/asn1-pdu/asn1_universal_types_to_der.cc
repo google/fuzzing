@@ -63,7 +63,7 @@ void Encode(const OctetString& octet_string, std::vector<uint8_t>& der) {
 }
 
 void Encode(const BitString& bit_string, std::vector<uint8_t>& der) {
-  EncodeTagAndLength(kAsn1Bitstring, bit_string.val().size() + 1, der.size(),
+  EncodeTagAndLength(kAsn1BitString, bit_string.val().size() + 1, der.size(),
                      der);
 
   if (!bit_string.val().empty()) {
