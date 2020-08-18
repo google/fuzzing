@@ -44,16 +44,29 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
 }
 
 DECLARE_ENCODE_FUNCTION(ExtendedKeyUsage) {
+  // RFC 5280, 4.2.1.9: |ExtendedKeyUsage| is a sequence of (1..MAX)
+  // |key_purpose_id|.
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the values are encoded.
+  size_t tag_len_pos = der.size();
+
+  // First |key_purpose_id| is set by protobuf and always encoded to meet comply
+  // with spec.
   Encode(val.key_purpose_id(), der);
   for (const auto& key_purpose_id : val.key_purpose_ids()) {
     Encode(key_purpose_id, der);
   }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the sequence |ExtendedKeyUsage|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(BasicConstraints) {
   // RFC 5280, 4.2.1.9: |BasicConstraints| is a sequence of |ca| and
-  // |path_len_constraint|. Save the current size in |tag_len_pos| to place
-  // sequence tag and length after the values are encoded.
+  // |path_len_constraint|.
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the values are encoded.
   size_t tag_len_pos = der.size();
 
   // RFC 5280, 4.2.1.9: |ca| is BOOLEAN DEFAULT FALSE.

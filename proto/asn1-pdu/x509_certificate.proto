@@ -193,6 +193,7 @@ message SubjectKeyIdentifier {
 
 // See RFC 5280, 4.2.1.3.
 message KeyUsage {
+  // KeyUsage ::= BIT STRING. Use bool to represent each bit of KeyUsage.
   required bool digital_signature = 1;
   required bool non_repudation = 2;
   required bool key_encipherment = 3;
