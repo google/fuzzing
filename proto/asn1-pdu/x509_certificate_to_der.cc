@@ -51,30 +51,53 @@ DECLARE_ENCODE_FUNCTION(ExtendedKeyUsage) {
 }
 
 DECLARE_ENCODE_FUNCTION(BasicConstraints) {
+  // RFC 5280, 4.2.1.9: |BasicConstraints| is a sequence of |ca| and
+  // |path_len_constraint|. Save the current size in |tag_len_pos| to place
+  // sequence tag and length after the values are encoded.
+  size_t tag_len_pos = der.size();
+
+  // RFC 5280, 4.2.1.9: |ca| is BOOLEAN DEFAULT FALSE.
+  // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
   if (val.ca().val()) {
     Encode(val.ca(), der);
   }
+
+  // RFC 5280, 4.2.1.9: |path_len_constrant| is OPTIONAL. Encode only if
+  // present.
   if (val.has_path_len_constraint()) {
     Encode(val.path_len_constraint(), der);
   }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the sequence |BasicConstraints|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(KeyUsage) {
+  constexpr struct Mask {
+    using Fn = bool (KeyUsage::*)(void) const;
+    Fn use_mask;
+    uint32_t mask;
+  } kMasks[] = {
+      {&KeyUsage::digital_signature, 0x01},
+      {&KeyUsage::non_repudation, 0x02},
+      {&KeyUsage::key_encipherment, 0x04},
+      {&KeyUsage::data_encipherment, 0x08},
+      {&KeyUsage::key_agreement, 0x10},
+      {&KeyUsage::key_cert_sign, 0x20},
+      {&KeyUsage::crl_sign, 0x40},
+      {&KeyUsage::encipher_only, 0x80},
+      {&KeyUsage::decipher_only, 0x100},
+  };
   uint16_t key_usage = 0x00;
-  auto masks = {val.digital_signature() ? 0x01 : 0x00,
-                val.digital_signature() ? 0x02 : 0x00,
-                val.digital_signature() ? 0x04 : 0x00,
-                val.digital_signature() ? 0x08 : 0x00,
-                val.digital_signature() ? 0x10 : 0x00,
-                val.digital_signature() ? 0x20 : 0x00,
-                val.digital_signature() ? 0x40 : 0x00,
-                val.digital_signature() ? 0x80 : 0x00,
-                val.digital_signature() ? 0x100 : 0x00};
-  for (const auto mask : masks) {
-    key_usage |= mask;
+  for (const auto& mask : kMasks) {
+    if ((val.*(mask.use_mask))()) {
+      key_usage |= mask.mask;
+    }
   }
+  // RFC 5280, 4.2.1.3: KeyUsage ::= BIT STRING.
   // Save the current size in |tag_len_pos| to place BitString tag and length
-  // after the value is encoded.
+  // after |key_usage| is encoded.
   size_t tag_len_pos = der.size();
   InsertVariableIntBase256(key_usage, der.size(), der);
   EncodeTagAndLength(kAsn1Bitstring, der.size() - tag_len_pos, tag_len_pos,

@@ -212,6 +212,8 @@ message BasicConstraints {
 
 // See RFC 5280, 4.2.1.12.
 message ExtendedKeyUsage {
+  // ExtendedKeyUsage is SEQUENCE SIZE (1..MAX) OF KeyPurposeId.
+  // This ensures that there is at least one |key_purpose_id| is present.
   required asn1_universal_types.ObjectIdentifier key_purpose_id = 1;
   repeated asn1_universal_types.ObjectIdentifier key_purpose_ids = 2;
 }
