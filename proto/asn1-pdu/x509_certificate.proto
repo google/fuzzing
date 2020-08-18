@@ -165,12 +165,9 @@ message Extension {
   oneof types {
     AuthorityKeyIdentifier authority_key_identifier = 4;
     SubjectKeyIdentifier subject_key_identifier = 5;
-<<<<<<< HEAD
     KeyUsage key_usage = 6;
     BasicConstraints basic_constraints = 7;
     ExtendedKeyUsage extended_key_usage = 8;
-=======
->>>>>>> master
   }
 }
 
