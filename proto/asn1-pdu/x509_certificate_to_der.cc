@@ -43,10 +43,78 @@ DECLARE_ENCODE_FUNCTION(AlgorithmIdentifierSequence) {
   EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
-DECLARE_ENCODE_FUNCTION(BasicConstraints) {
-  if(val.cA().val()) {
-    Encode(val.cA());
+DECLARE_ENCODE_FUNCTION(ExtendedKeyUsage) {
+  // RFC 5280, 4.2.1.9: |ExtendedKeyUsage| is a sequence of (1..MAX)
+  // |key_purpose_id|.
+  // Save the current size in |tag_len_pos| to place sequence
+  // tag and length after the values are encoded.
+  size_t tag_len_pos = der.size();
+
+  // First |key_purpose_id| is set by protobuf and always encoded to comply
+  // with spec.
+  Encode(val.key_purpose_id(), der);
+  for (const auto& key_purpose_id : val.key_purpose_ids()) {
+    Encode(key_purpose_id, der);
   }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the sequence |ExtendedKeyUsage|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
+DECLARE_ENCODE_FUNCTION(BasicConstraints) {
+  // RFC 5280, 4.2.1.9: |BasicConstraints| is a sequence of |ca| and
+  // |path_len_constraint|.
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the values are encoded.
+  size_t tag_len_pos = der.size();
+
+  // RFC 5280, 4.2.1.9: |ca| is BOOLEAN DEFAULT FALSE.
+  // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
+  if (val.ca().val()) {
+    Encode(val.ca(), der);
+  }
+
+  // RFC 5280, 4.2.1.9: |path_len_constrant| is OPTIONAL. Encode only if
+  // present.
+  if (val.has_path_len_constraint()) {
+    Encode(val.path_len_constraint(), der);
+  }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the sequence |BasicConstraints|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
+}
+
+DECLARE_ENCODE_FUNCTION(KeyUsage) {
+  constexpr struct Mask {
+    using Fn = bool (KeyUsage::*)(void) const;
+    Fn key_usage_set;
+    uint32_t key_usage_value;
+  } kMasks[] = {
+      {&KeyUsage::digital_signature, 0x01},
+      {&KeyUsage::non_repudation, 0x02},
+      {&KeyUsage::key_encipherment, 0x04},
+      {&KeyUsage::data_encipherment, 0x08},
+      {&KeyUsage::key_agreement, 0x10},
+      {&KeyUsage::key_cert_sign, 0x20},
+      {&KeyUsage::crl_sign, 0x40},
+      {&KeyUsage::encipher_only, 0x80},
+      {&KeyUsage::decipher_only, 0x100},
+  };
+  uint16_t key_usage = 0x00;
+  for (const auto& mask : kMasks) {
+    if ((val.*(mask.key_usage_set))()) {
+      key_usage |= mask.key_usage_value;
+    }
+  }
+  // RFC 5280, 4.2.1.3: KeyUsage ::= BIT STRING.
+  // Save the current size in |tag_len_pos| to place BitString tag and length
+  // after |key_usage| is encoded.
+  size_t tag_len_pos = der.size();
+  InsertVariableIntBase256(key_usage, der.size(), der);
+  EncodeTagAndLength(kAsn1BitString, der.size() - tag_len_pos, tag_len_pos,
+                     der);
 }
 
 DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
@@ -54,6 +122,13 @@ DECLARE_ENCODE_FUNCTION(SubjectKeyIdentifier) {
 }
 
 DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
+  // RFC 5280, 4.2.1.1: |AuthorityKeyIdentifier)| is a sequence of
+  // |key_identifier|, |authority_cert_issuer|, and
+  // |authority_cert_serial_number|.
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
   if (val.has_key_identifier()) {
     size_t pos_of_tag = der.size();
     Encode(val.key_identifier(), der);
@@ -75,6 +150,10 @@ DECLARE_ENCODE_FUNCTION(AuthorityKeyIdentifier) {
     // 5280, 4.2.1.1).
     ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the |AuthorityKeyIdentifier|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(RawExtension) {
@@ -98,6 +177,15 @@ void EncodeExtensionValue(const Extension& val, std::vector<uint8_t>& der) {
     case Extension::TypesCase::kSubjectKeyIdentifier:
       Encode(val.subject_key_identifier(), der);
       break;
+    case Extension::TypesCase::kBasicConstraints:
+      Encode(val.basic_constraints(), der);
+      break;
+    case Extension::TypesCase::kExtendedKeyUsage:
+      Encode(val.extended_key_usage(), der);
+      break;
+    case Extension::TypesCase::kKeyUsage:
+      Encode(val.key_usage(), der);
+      break;
     case Extension::TypesCase::TYPES_NOT_SET:
       Encode(val.raw_extension(), der);
       break;
@@ -119,6 +207,18 @@ void EncodeExtensionID(const Extension& val, std::vector<uint8_t>& der) {
     case Extension::TypesCase::kSubjectKeyIdentifier:
       // RFC 5280, 4.2.1.2: |SubjectKeyIdentifier| OID is {2 5 29 14}.
       encoded_oid = {(2 * 40) + 5, 29, 14};
+      break;
+    case Extension::TypesCase::kKeyUsage:
+      // RFC 5280, 4.2.1.3: |KeyUsage| OID is {2 5 29 15}.
+      encoded_oid = {(2 * 40) + 5, 29, 15};
+      break;
+    case Extension::TypesCase::kBasicConstraints:
+      // RFC 5280, 4.2.1.9: |BasicConstraints| OID is {2 5 29 14}.
+      encoded_oid = {(2 * 40) + 5, 29, 19};
+      break;
+    case Extension::TypesCase::kExtendedKeyUsage:
+      // RFC 5280, 4.2.1.12: |ExtendedKeyUsage| OID is {2 5 29 37}.
+      encoded_oid = {(2 * 40) + 5, 29, 37};
       break;
     case Extension::TypesCase::TYPES_NOT_SET:
       Encode(val.raw_extension().extn_id(), der);
@@ -150,10 +250,21 @@ DECLARE_ENCODE_FUNCTION(Extension) {
 }
 
 DECLARE_ENCODE_FUNCTION(ExtensionSequence) {
+  // RFC 5280, 4.2.1.9: |ExtensionSequence| is a sequence of (1..MAX) Extension.
+  // Save the current size in |tag_len_pos| to place sequence tag and length
+  // after the value is encoded.
+  size_t tag_len_pos = der.size();
+
+  // First |extension| is set by protobuf and always encoded to comply
+  // with spec.
   Encode(val.extension(), der);
   for (const auto& extension : val.extensions()) {
     Encode(extension, der);
   }
+
+  // The current size of |der| subtracted by |tag_len_pos|
+  // equates to the size of the |ExtensionSequence|.
+  EncodeTagAndLength(kAsn1Sequence, der.size() - tag_len_pos, tag_len_pos, der);
 }
 
 DECLARE_ENCODE_FUNCTION(SubjectPublicKeyInfoSequence) {
