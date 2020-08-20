@@ -20,19 +20,16 @@
 
 namespace x509_certificate_chain {
 
-// Encodes |X509_certificate| to DER, returning the encoded bytes in |der_|.
-std::vector<uint8_t> X509CertificateChainToDER(
+std::vector<std::vector<uint8_t>> X509CertificateChainToDER(
     const X509CertificateChain& x509_certificate_chain) {
-  // Contains DER encoded |X509CertificateChain|.
-  std::vector<uint8_t> der;
+  // contains DER encoded |certificates|.
+  std::vector<std::vector<uint8_t>> der;
 
-  std::vector<uint8_t> der_cert = x509_certificate::X509CertificateToDER(
-      x509_certificate_chain.certificate());
-  der.insert(der.end(), der_cert.begin(), der_cert.end());
+  der.push_back(x509_certificate::X509CertificateToDER(
+      x509_certificate_chain.certificate()));
 
   for (const auto& cert : x509_certificate_chain.certificates()) {
-    der_cert = x509_certificate::X509CertificateToDER(cert);
-    der.insert(der.end(), der_cert.begin(), der_cert.end());
+    der.push_back(x509_certificate::X509CertificateToDER(cert));
   }
 
   return der;
