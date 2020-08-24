@@ -41,8 +41,7 @@ void ApplyOperation(
     return;
   }
 
-  auto* signature_value =
-      chain[operation.index()].mutable_signature_value();
+  auto* signature_value = chain[operation.index()].mutable_signature_value();
   signature_value->clear_pdu();
   signature_value->mutable_value()->set_unused_bits(
       asn1_universal_types::UnusedBits::VAL0);
@@ -71,6 +70,7 @@ std::vector<std::vector<uint8_t>> MutatedChainToDER(
   auto chain = mutated_chain.chain();
   auto operations = mutated_chain.operations();
 
+  // If the chain is empty, return immediately to not slow down the fuzzer.
   if (chain.empty()) {
     return {{}};
   }

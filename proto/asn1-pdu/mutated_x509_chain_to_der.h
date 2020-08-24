@@ -25,7 +25,7 @@
 
 namespace x509_certificate {
 
-// Applies |operations| to |x509_chain| and returns the DER encoded chain.
+// Applies |operations| to |chain| and returns the DER encoded chain.
 std::vector<std::vector<uint8_t>> MutatedChainToDER(
     const MutatedChain& mutated_chain);
 

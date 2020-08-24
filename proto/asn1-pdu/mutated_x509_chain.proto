@@ -25,13 +25,13 @@ import "x509_certificate.proto";
 package x509_certificate;
 
 message MutatedChain {
-  // An X.509 Certificate Chain comprises a list of certificates.
+  // An certificate chain comprises a list of certificates.
   repeated x509_certificate.X509Certificate chain = 1;
   repeated Operation operations = 2;
 }
 
-// Operations to mutate the certificate chain to force structural relationships
-// between the certificates.
+// Operation is used to mutate the certificate chain to force structural
+// relationships between the certificates.
 message Operation {
   oneof types {
     MutateSignatureOperation mutate_signature_operation = 1;
@@ -41,11 +41,12 @@ message Operation {
 message MutateSignatureOperation {
   // Allow certificate to be valid or invalid for fuzzing.
   required bool valid = 1;
-  // |index| represents the position of the certificate that will be mutated.
+  // |index| represents the position of the certificate whose signature will be
+  // mutated.
   required CertIndex index = 2;
 }
 
-// Contains the positions of the certiciate chain that will be mutated.
+// Contains the positions of the certiciate chain that can be mutated.
 enum CertIndex {
   CERT_0 = 0;
   CERT_1 = 1;
