@@ -25,7 +25,7 @@ import "x509_certificate.proto";
 package x509_certificate;
 
 message MutatedChain {
-  // An certificate chain comprises a list of certificates.
+  // A certificate chain comprises a list of certificates.
   repeated x509_certificate.X509Certificate chain = 1;
   repeated Operation operations = 2;
 }
