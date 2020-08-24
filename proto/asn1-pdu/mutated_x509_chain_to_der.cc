@@ -15,64 +15,71 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "mutated_x509_chain_to_der.h"
+#include "x509_certificate_to_der.h"
 
-namespace mutated_x509_chain {
+namespace x509_certificate {
 
-std::vector<std::vector<uint8_t>> EncodeX509Chain(const X509Chain& x509_chain) {
+// DER encodes each |certificate| in |chain| and returns
+// the encoded certificates in |der|.
+std::vector<std::vector<uint8_t>> EncodeChain(
+    const google::protobuf::RepeatedPtrField<X509Certificate>& chain) {
   std::vector<std::vector<uint8_t>> der;
 
-  for (const auto& cert : x509_chain.certificates()) {
+  for (const auto& cert : chain) {
     der.push_back(X509CertificateToDER(cert));
   }
 
   return der;
 }
 
-DECLARE_APPLY_OPERATION_FUNCTION(MutateSignatureOperation) {
-  auto* signature_value = x509.mutable_signature_value();
+void ApplyOperation(
+    const MutateSignatureOperation& operation,
+    google::protobuf::RepeatedPtrField<X509Certificate>& chain) {
+  // An |operation| on a certiciate cannot be executed if the |index| is greater
+  // than or euqal to the |size| of the certificate chain.
+  if (operation.index() >= chain.size()) {
+    return;
+  }
+
+  auto* signature_value =
+      chain[operation.index()].mutable_signature_value();
   signature_value->clear_pdu();
   signature_value->mutable_value()->set_unused_bits(
       asn1_universal_types::UnusedBits::VAL0);
   // Represent a valid signature value with 1 and invalid with 0.
-  if (operation.is_valid()) {
+  if (operation.valid()) {
     signature_value->mutable_value()->set_val("1");
   } else {
     signature_value->mutable_value()->set_val("0");
   }
 }
 
-DECLARE_APPLY_OPERATION_FUNCTION(Operation) {
+void ApplyOperation(
+    const Operation& operation,
+    google::protobuf::RepeatedPtrField<X509Certificate>& chain) {
   switch (operation.types_case()) {
     case Operation::TypesCase::kMutateSignatureOperation:
-      ApplyOperation(x509, operation.mutate_signature_operation());
+      ApplyOperation(operation.mutate_signature_operation(), chain);
       break;
     case Operation::TypesCase::TYPES_NOT_SET:
       return;
   }
 }
 
-// An |index| of a certiciate is valid if it's less than the |size| of the
-// certificate chain.
-inline bool isValidIndex(uint8_t index, size_t size) {
-  return index < size;
-}
-
 std::vector<std::vector<uint8_t>> MutatedChainToDER(
-    const MutatedX509Chain& mutated_x509_chain) {
-  auto x509_chain = mutated_x509_chain.x509_chain().certificates();
-  auto operations = mutated_x509_chain.operations();
+    const MutatedChain& mutated_chain) {
+  auto chain = mutated_chain.chain();
+  auto operations = mutated_chain.operations();
 
-  if (x509_chain.empty()) {
+  if (chain.empty()) {
     return {{}};
   }
 
   for (const auto& operation : operations) {
-    if (isValidIndex(operation.index(), x509_chain.size())) {
-      ApplyOperation(x509_chain[operation.index()], operation);
-    }
+    ApplyOperation(operation, chain);
   }
 
-  return EncodeX509Chain(mutated_x509_chain.x509_chain());
+  return EncodeChain(chain);
 }
 
-}  // namespace mutated_x509_chain
+}  // namespace x509_certificate

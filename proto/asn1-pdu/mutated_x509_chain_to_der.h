@@ -23,25 +23,12 @@
 
 #include "mutated_x509_chain.pb.h"
 
-namespace mutated_x509_chain {
+namespace x509_certificate {
 
 // Applies |operations| to |x509_chain| and returns the DER encoded chain.
 std::vector<std::vector<uint8_t>> MutatedChainToDER(
-    const MutatedX509Chain& mutated_x509_chain);
+    const MutatedChain& mutated_chain);
 
-// Applies the |TYPE| operation to |x509| in order to create meaningful
-// certificate chains.
-#define DECLARE_APPLY_OPERATION_FUNCTION(TYPE)                 \
-  void ApplyOperation(x509_certificate::X509Certificate& x509, \
-                      const TYPE& operation)
-
-DECLARE_APPLY_OPERATION_FUNCTION(Operation);
-DECLARE_APPLY_OPERATION_FUNCTION(MutateSignatureOperation);
-
-// DER encodes each |certificate| in |x509_chain| and returns
-// the encoded certificates in |der|.
-std::vector<std::vector<uint8_t>> EncodeX509Chain(const X509Chain& x509_chain);
-
-}  // namespace mutated_x509_chain
+}  // namespace x509_certificate
 
 #endif  // PROTO_ASN1_PDU_X509_CERTIFICATE_TO_DER_H_
