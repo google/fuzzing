@@ -15,7 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "mutated_x509_chain_to_der.h"
-#include "x509_certificate_to_der.h"
 
 namespace mutated_x509_chain {
 
