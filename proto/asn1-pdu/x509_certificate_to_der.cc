@@ -307,13 +307,14 @@ DECLARE_ENCODE_FUNCTION(ValiditySequence) {
 }
 
 DECLARE_ENCODE_FUNCTION(VersionNumber) {
-  // RFC 5280, 4.1 & 4.1.2.1: |val| 0 is DEFAULT.
-  // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
+  // RFC 5280, 4.1 & 4.1.2.1:
+  // version         [0]  EXPLICIT Version DEFAULT v1,
+  // Version  ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
+  //
+  // X.690 (2015), 11.5: DEFAULT value in a sequence field is not encoded
   if (val != 0) {
-    // |version| is Context-specific with tag number 0 (RFC 5280, 4.1
-    // & 4.1.2.1).
-    // Takes on values 0, 1 and 2, so only require length of 1 to
-    // encode it (RFC 5280, 4.1 & 4.1.2.1).
+    // Use a fixed buffer for the EXPLICIT encoding, since the version is always
+    // a one byte INTEGER.
     std::vector<uint8_t> der_version = {
         kAsn1ContextSpecific | kAsn1Constructed | 0x00, 0x03, kAsn1Integer,
         0x01, static_cast<uint8_t>(val)};
