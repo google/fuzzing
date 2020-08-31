@@ -307,12 +307,18 @@ DECLARE_ENCODE_FUNCTION(ValiditySequence) {
 }
 
 DECLARE_ENCODE_FUNCTION(VersionNumber) {
-  // |version| is Context-specific with tag number 0 (RFC 5280, 4.1 & 4.1.2.1).
-  // Takes on values 0, 1 and 2, so only require length of 1 to
-  // encode it (RFC 5280, 4.1 & 4.1.2.1).
-  std::vector<uint8_t> der_version = {kAsn1ContextSpecific | 0x00, 0x01,
-                                      static_cast<uint8_t>(val)};
-  der.insert(der.end(), der_version.begin(), der_version.end());
+  // RFC 5280, 4.1 & 4.1.2.1: |val| 0 is DEFAULT.
+  // (X.690 (2015), 11.5): DEFAULT value in a sequence field is not encoded.
+  if (val != 0) {
+    // |version| is Context-specific with tag number 0 (RFC 5280, 4.1
+    // & 4.1.2.1).
+    // Takes on values 0, 1 and 2, so only require length of 1 to
+    // encode it (RFC 5280, 4.1 & 4.1.2.1).
+    std::vector<uint8_t> der_version = {
+        kAsn1ContextSpecific | kAsn1Constructed | 0x00, 0x03, kAsn1Integer,
+        0x01, static_cast<uint8_t>(val)};
+    der.insert(der.end(), der_version.begin(), der_version.end());
+  }
 }
 
 DECLARE_ENCODE_FUNCTION(TBSCertificateSequence) {
@@ -342,8 +348,8 @@ DECLARE_ENCODE_FUNCTION(TBSCertificateSequence) {
   if (val.has_subject_unique_id()) {
     size_t pos_of_tag = der.size();
     Encode(val.subject_unique_id(), der);
-    // |subject_unqiue_id| is Context-specific with tag number 2 (RFC 5280, 4.1
-    // & 4.1.2.8).
+    // |subject_unqiue_id| is Context-specific with tag number 2 (RFC
+    // 5280, 4.1 & 4.1.2.8).
     ReplaceTag(kAsn1ContextSpecific | 0x02, pos_of_tag, der);
   }
   if (val.has_extensions()) {
