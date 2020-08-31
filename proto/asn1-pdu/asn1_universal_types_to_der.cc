@@ -111,7 +111,7 @@ void Encode(const UTCTime& utc_time, std::vector<uint8_t>& der) {
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  EncodeTimestamp(utc_time.time_stamp(), false, der);
+  EncodeTimestamp(utc_time.time_stamp(), true, der);
 
   // Check if encoding was successful.
   if (der.size() != tag_len_pos) {
@@ -126,7 +126,7 @@ void Encode(const GeneralizedTime& generalized_time,
   // after the value is encoded.
   const size_t tag_len_pos = der.size();
 
-  EncodeTimestamp(generalized_time.time_stamp(), true, der);
+  EncodeTimestamp(generalized_time.time_stamp(), false, der);
 
   // Check if encoding was successful.
   if (der.size() != tag_len_pos) {
