@@ -1,0 +1,63 @@
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// This protobuf represents an X.509 certificate chain with a set of operations
+// to mutate the chain to create structural relationships between the
+// certificates.
+
+syntax = "proto2";
+
+import "x509_certificate.proto";
+
+package x509_certificate;
+
+message MutatedChain {
+  // An X.509 Certificate Chain comprises a list of certificates.
+  repeated x509_certificate.X509Certificate chain = 1;
+  repeated TrustParameter trust_parameters = 2;
+  repeated Mutation mutations = 3;
+}
+
+message TrustParameter {
+  // Allow certificate to be trusted or not-trusted for fuzzing.
+  required bool trusted = 1;
+  // |index| represents the position of the certificate that will be mutated.
+  required CertIndex index = 2;
+}
+
+// Mutate the certificate chain protobuf to force structural relationships
+// between the certificates.
+message Mutation {
+  oneof types {
+    MutateSignature mutate_signature = 1;
+  }
+}
+
+message MutateSignature {
+  // Allow certificate to be valid or invalid for fuzzing.
+  required bool valid = 1;
+  // |index| represents the position of the certificate that will be mutated.
+  required CertIndex index = 2;
+}
+
+// Contains the positions of the certiciate chain that will be mutated.
+enum CertIndex {
+  CERT_0 = 0;
+  CERT_1 = 1;
+  CERT_2 = 2;
+  CERT_3 = 3;
+  CERT_4 = 4;
+}
