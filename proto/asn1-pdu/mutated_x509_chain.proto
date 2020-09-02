@@ -32,7 +32,7 @@ message MutatedChain {
 }
 
 message TrustParameter {
-  // Allow certificate to be trusted or not-trusted for fuzzing.
+  // Allow certificate to be trusted or not-trusted.
   required bool trusted = 1;
   // |index| represents the position of the certificate that will be mutated.
   required CertIndex index = 2;
