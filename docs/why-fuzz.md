@@ -65,11 +65,11 @@ Types of projects where fuzzing has been useful:
 
 ## Fuzzing Successes
 Historically, fuzzing has been an extremely effective technique for finding long-standing bugs in code bases that fall into the target categories above. Some trophy list examples (with a total number of tens of thousands bugs found inside and outside of Google):
-- [http://lcamtuf.coredump.cx/afl/#bugs](http://lcamtuf.coredump.cx/afl/#bugs)
-- [http://llvm.org/docs/LibFuzzer.html#trophies](http://llvm.org/docs/LibFuzzer.html#trophies)
-- [https://github.com/google/syzkaller/wiki/Found-Bugs](https://github.com/google/syzkaller/wiki/Found-Bugs)
-- [https://github.com/dvyukov/go-fuzz#trophies](https://github.com/dvyukov/go-fuzz#trophies)
-- [https://github.com/google/honggfuzz#honggfuzz](https://github.com/google/honggfuzz#honggfuzz)
+- [AFL bugs](http://lcamtuf.coredump.cx/afl/#bugs)
+- [libFuzzer bugs](http://llvm.org/docs/LibFuzzer.html#trophies)
+- [syzkaller bugs](https://github.com/google/syzkaller/blob/master/docs/found_bugs.md)
+- [go-fuzz bugs](https://github.com/dvyukov/go-fuzz#trophies)
+- [Honggfuzz bugs](https://github.com/google/honggfuzz#trophies)
 - [ClusterFuzz bugs in Chrome](https://bugs.chromium.org/p/chromium/issues/list?can=1&q=label%3AClusterFuzz+-status%3AWontFix%2CDuplicate&sort=-id&colspec=ID+Pri+M+Stars+ReleaseBlock+Cr+Status+Owner+Summary+OS+Modified&x=m&y=releaseblock&cells=tiles)
 - [OSS-Fuzz bugs](https://bugs.chromium.org/p/oss-fuzz/issues/list?q=label%3AClusterFuzz+-status%3AWontFix%2CDuplicate&can=1)
 - [Facebook’s Sapienz](https://engineering.fb.com/developer-tools/sapienz-intelligent-automated-software-testing-at-scale/) (UI fuzzing)
