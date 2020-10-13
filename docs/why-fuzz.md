@@ -31,7 +31,7 @@ Why? **Fuzz testing finds programming errors unrelated to the project requiremen
   - Memory leaks
 - Arithmetic bugs:
   - Div-by-zero, int/float overflows, invalid bitwise shifts
-- Plain crashes: 
+- Plain crashes:
   - NULL dereferences, Uncaught exceptions
 - Concurrency bugs:
   - Data races, Deadlocks
@@ -54,7 +54,7 @@ Types of projects where fuzzing has been useful:
   - Crypto (boringssl, openssl)
   - Compression (zip, gzip, bzip2, brotli, …)
   - Compilers and interpreters (PHP, Perl, Python, Go, Clang, …)
-  - Services/libraries that consume protobuffers (i.e. anything in google3)
+  - Services/libraries that consume protobuffers
   - Regular expression matchers (PCRE, RE2, libc)
   - Text/UTF processing (icu)
   - Databases (SQlite)
