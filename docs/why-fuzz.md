@@ -22,7 +22,7 @@ Why? **Fuzz testing finds programming errors unrelated to the project requiremen
 
 **Fuzzing is not a substitute for explicitly testing functional requirements.** Write the appropriate unit/integration/system tests. Then consider additional fuzzing if applicable.
 
-**Fuzz testing must be done continuously.** This problem is solved at Google. Once a fuzz target is submitted, the fuzzing infrastructure will run it 24/7. With corpus growing over time, it provides both intensive testing for the stable code and regression testing for the new changes.
+**Fuzz testing must be done continuously.** This problem is solved at Google. Once a fuzz target is submitted, the fuzzing infrastructure will run it 24/7. With corpus growing over time, it provides both intensive testing for the stable code and regression testing for the new changes. [ClusterFuzz](https://github.com/google/clusterfuzz) is an open-source fuzzing infrastructure that is capable of running tests continuously. High impact open-source projects can integrate with the [OSS-Fuzz](https://github.com/google/oss-fuzz) service to receive free continuous fuzzing.
 
 ## Fuzzing is typically used to find the following kinds of bugs
 - Bugs specific to C/C++ that require the *[sanitizers](https://github.com/google/sanitizers)* to catch:
