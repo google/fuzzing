@@ -139,6 +139,9 @@ of the inputs will be rejected early as broken.
 
 So, it is important to ensure that the fuzz target can discover
 a large subset of reachable control flow edges without using the seed corpus.
+Tools such as [Clang's source-based code
+coverage](https://clang.llvm.org/docs/SourceBasedCodeCoverage.html) can assist
+with this process.
 
 If fuzzing a given target without a seed corpus for,
 say, a billion iterations, does not provide coverage comparable to a good seed
