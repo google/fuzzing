@@ -16,16 +16,18 @@ has found a bug by detecting an application crash. Many potential interesting
 security bugs don’t necessarily cause a normal application to crash immediately.
 
 This is where tools like the [sanitizers](https://github.com/google/sanitizers)
-can be useful: *
-[AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) detects
+can be useful:
+
+* [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) detects
 various memory safety issues such as use-after-free bugs and buffer overflows.
 If nothing else, we strongly recommend building any of your fuzzing binaries
-with this instrumentation. *
-[UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+with this instrumentation.
+* [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
 detects various forms of
 [undefined behavior](https://en.wikipedia.org/wiki/Undefined_behavior). For
 example, it can detect signed integer overflow, use of misaligned pointers, and
-much more. * [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html)
+much more.
+* [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html)
 detects reads of uninitialized memory. While it is a very useful tool, it can be
 much more difficult to use than the others because it requires that all
 dependencies are also instrumented. We recommend setting this up after you
