@@ -68,7 +68,7 @@ implies that at least one of them has a bug. This technique can be used in any
 case where a specification has multiple implementations, or for programs with
 multiple levels of optimization that can be compared to one another. For
 example, it has been used to test
-[cryptography libraries]([200~https://github.com/guidovranken/cryptofuzz) and
+[cryptography libraries](https://github.com/guidovranken/cryptofuzz) and
 [javascript engies](https://www.squarefree.com/2007/08/02/fuzzing-for-correctness/).
 
 ## Fuzzing Tools
@@ -101,7 +101,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 [Honggfuzz] is another fuzzing tool with a rich set of
 [features](https://github.com/google/honggfuzz#features) available to it. We
 recommend it for security researchers looking for more customization options in
-their fuzzers, or developers on complex projects where working in libFuzzer's
+their fuzzers, or developers on complex projects where working within libFuzzer's
 unit-test-like style is difficult.
 
 It allows users to
