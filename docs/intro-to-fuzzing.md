@@ -18,20 +18,20 @@ security bugs don’t necessarily cause a normal application to crash immediatel
 This is where tools like the [sanitizers](https://github.com/google/sanitizers)
 can be useful:
 
-* [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) detects
-various memory safety issues such as use-after-free bugs and buffer overflows.
-If nothing else, we strongly recommend building any of your fuzzing binaries
-with this instrumentation.
-* [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
-detects various forms of
-[undefined behavior](https://en.wikipedia.org/wiki/Undefined_behavior). For
-example, it can detect signed integer overflow, use of misaligned pointers, and
-much more.
-* [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html)
-detects reads of uninitialized memory. While it is a very useful tool, it can be
-much more difficult to use than the others because it requires that all
-dependencies are also instrumented. We recommend setting this up after you
-already have some familiarity with the other tools.
+*   [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html)
+    detects various memory safety issues such as use-after-free bugs and buffer
+    overflows. If nothing else, we strongly recommend building any of your
+    fuzzing binaries with this instrumentation.
+*   [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+    detects various forms of
+    [undefined behavior](https://en.wikipedia.org/wiki/Undefined_behavior). For
+    example, it can detect signed integer overflow, use of misaligned pointers,
+    and much more.
+*   [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) detects
+    reads of uninitialized memory. While it is a very useful tool, it can be
+    much more difficult to use than the others because it requires that all
+    dependencies are also instrumented. We recommend setting this up after you
+    already have some familiarity with the other tools.
 
 By taking advantage of these, many subtle bugs will be detected as deterministic
 crashes. This not only allows you to find the bugs more easily, but also makes
@@ -62,12 +62,29 @@ handle untrusted inputs. Though the same advice from above applies, some fuzzing
 tools allow this code to be
 [tested directly](https://github.com/google/honggfuzz/blob/master/socketfuzzer/README.md).
 
+Code can also be tested for correctness by comparing the results of two or more
+implementations to one another. Any difference in the output of the applications
+implies that at least one of them has a bug. This technique can be used in any
+case where a specification has multiple implementations, or for programs with
+multiple levels of optimization that can be compared to one another. For
+example, it has been used to test
+[cryptography libraries]([200~https://github.com/guidovranken/cryptofuzz) and
+[javascript engies](https://www.squarefree.com/2007/08/02/fuzzing-for-correctness/).
+
 ## Fuzzing Tools
+
+Each fuzzing tool has its own strengths and weaknesses, and it's not always
+clear which will be best for a given task. The
+[FuzzBench](https://github.com/google/fuzzbench) project attempts to empirically
+evalutate various fuzzing tools, and it can be helpful in making a decision.
 
 ### [libFuzzer]
 
 [libFuzzer] is a tool which allows you to write fuzz tests in a similar style to
-unit tests. A libFuzzer-based fuzzer could be as simple as the following:
+unit tests. For developers setting up fuzzing for the first time, we recommend
+it for its simplicity.
+
+A libFuzzer-based fuzzer could be as simple as the following:
 
 ```cpp
 // fuzz_target.cc
@@ -77,35 +94,37 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 }
 ```
 
-For new projects setting up fuzzing for the first time, we tend to recommend
-this style of fuzzing for its simplicity. It can also be easier for developers
-to grasp how these tests work, due to their similarity to unit tests.
-
 [libfuzzer]: https://llvm.org/docs/LibFuzzer.html
 
 ### [Honggfuzz]
 
 [Honggfuzz] is another fuzzing tool with a rich set of
-[features](https://github.com/google/honggfuzz#features) available to it. It
-does not necessarily expect targets to be defined and formed in the same style
-as libFuzzer-based targets, though it can be used in the same way.
+[features](https://github.com/google/honggfuzz#features) available to it. We
+recommend it for security researchers looking for more customization options in
+their fuzzers, or developers on complex projects where working in libFuzzer's
+unit-test-like style is difficult.
 
-Application developers that require more customization in how input is fed to
-the program may find that [Honggfuzz] works better with their use cases.
+It allows users to
+[specify how input files should be fed](https://github.com/google/honggfuzz/blob/master/docs/USAGE.md)
+to a target program (e.g. on the command line, on stdin) or allows more
+complicated customizations such as
+[feeding input to a network server](https://github.com/google/honggfuzz/blob/master/socketfuzzer/README.md)
+directly.
 
 [Honggfuzz]: https://github.com/google/honggfuzz
 
 ### [AFL]
 
 [AFL] is the tool that did the most to drive the early success of
-coverage-guided fuzzing. Many
+coverage-guided fuzzing. We generally do not recommend AFL for new projects
+since it is not as well-maintained as Honggfuzz or libFuzzer. That said, because
+of its widespread it is common to encounter existing projects which rely on it
+for fuzzing.
+
+Many
 [specialized variants](https://github.com/google/fuzzing/blob/master/docs/afl-based-fuzzers-overview.md)
 of AFL have been developed for a variety of use cases, and which provide a
-number of potential improvements.
-
-Of the three tools, AFL is likely the most widely used. Many projects which
-already have some exposure to fuzzing are already using it. That said, it is not
-as well-maintained as the other options. Forks such as
+number of potential improvements. Forks such as
 [AFL++](https://github.com/AFLplusplus/AFLplusplus) are better maintained while
 still providing good compatibility with fuzzers originally written for AFL.
 
