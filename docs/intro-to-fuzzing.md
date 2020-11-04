@@ -94,6 +94,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 }
 ```
 
+This
+[tutorial](https://github.com/google/fuzzing/blob/master/tutorial/libFuzzerTutorial.md)
+takes a deeper dive into how to use libFuzzer.
+
 [libfuzzer]: https://llvm.org/docs/LibFuzzer.html
 
 ### [Honggfuzz]
