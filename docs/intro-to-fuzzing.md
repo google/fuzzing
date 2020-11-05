@@ -132,6 +132,11 @@ still providing good compatibility with fuzzers originally written for AFL.
 
 ## Further reading
 
+### [Building fuzz targets](https://github.com/google/fuzzing/blob/master/docs/building-fuzz-targets.md)
+
+This document provides detailed instructions on how to build fuzz targets using
+libFuzzer or AFL with the sanitizer tools enabled.
+
 ### [What makes a good fuzz target?](https://github.com/google/fuzzing/blob/master/docs/good-fuzz-target.md)
 
 After you write your first fuzz target, you may be surprised to find that it
