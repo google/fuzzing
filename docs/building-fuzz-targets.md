@@ -72,12 +72,11 @@ The `-fsanitize=undefined` flag enables UBSan.
 ### [libFuzzer]
 
 For users setting up fuzzing for the first time, we recommend libFuzzer for its
-simplicity. When building with Clang, and already taking advantage of the
-sanitizers, enabling libFuzzer is as simple as adding the `-fsanitize=fuzzer`
-flag to your build command.
+simplicity. When building with Clang enabling libFuzzer is as simple as adding
+the `-fsanitize=fuzzer` flag to your build command.
 
-Assuming you have already written a [fuzz target], you can build and run with
-commands resembling the following:
+Assuming you have already written a [fuzz target] \(fuzzer.cc in this example\),
+you can build and run with commands resembling the following:
 
 ```bash
 # Build the fuzz target.
@@ -96,11 +95,11 @@ clang++ -fsanitize=address,fuzzer fuzzer.cc -o fuzzer
 instructions.**
 
 For new fuzzer developers that have developed libFuzzer-style targets (those
-which define LLVMFuzzerTestOneInput), but who wish to try AFL, we provide
+which define LLVMFuzzerTestOneInput) who also wish to try AFL, we provide
 [a script](https://google.github.io/clusterfuzz/setting-up-fuzzing/build_afl.bash)
-that can assist with building those fuzz targets using AFL.
+to assist with building.
 
-After installing the script, you can build and run with:
+After downloading it, you can build and run with:
 
 ```bash
 # Build afl-fuzz and FuzzingEngine.a
