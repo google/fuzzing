@@ -99,7 +99,9 @@ which define LLVMFuzzerTestOneInput) who also wish to try AFL, we provide
 [a script](https://google.github.io/clusterfuzz/setting-up-fuzzing/build_afl.bash)
 to assist with building.
 
-After downloading it, you can build and run with:
+After
+[downloading](https://google.github.io/clusterfuzz/setting-up-fuzzing/build_afl.bash)
+it, you can build and run with:
 
 ```bash
 # Build afl-fuzz and FuzzingEngine.a
