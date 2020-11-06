@@ -1,8 +1,8 @@
 # Building fuzz targets
 
 This document focuses on the specifics of how to build fuzzers in common
-configurations useful for detecting security bugs. If you haven’t written your
-first fuzz target yet or aren’t sure where to start, see the
+configurations useful for detecting security and stability bugs. If you haven’t
+written your first fuzz target yet or aren’t sure where to start, see the
 [introduction to fuzzing](https://github.com/google/fuzzing/blob/master/docs/intro-to-fuzzing.md)
 document.
 
