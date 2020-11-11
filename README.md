@@ -7,9 +7,9 @@ see [CONTRIBUTING](CONTRIBUTING) file for more info.
 
 # Related projects
 
-* [OSS-Fuzz](https://github.com/google/oss-fuzz)
-* [ClusterFuzz](https://github.com/google/clusterfuzz)
-* [Fuzzer Test Suite](https://github.com/google/fuzzer-test-suite)
+* [OSS-Fuzz](https://github.com/google/oss-fuzz) - Continuous Fuzzing Service for Open Source Software
+* [ClusterFuzz](https://github.com/google/clusterfuzz) - Scalable Fuzzing Infrastructure
+* [FuzzBench](https://github.com/google/fuzzbench) - Fuzzer benchmarking as a service
 
 # Disclaimer
 
