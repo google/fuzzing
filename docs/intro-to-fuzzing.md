@@ -69,7 +69,7 @@ case where a specification has multiple implementations, or for programs with
 multiple levels of optimization that can be compared to one another. For
 example, it has been used to test
 [cryptography libraries](https://github.com/guidovranken/cryptofuzz) and
-[javascript engies](https://www.squarefree.com/2007/08/02/fuzzing-for-correctness/).
+[javascript engines](https://www.squarefree.com/2007/08/02/fuzzing-for-correctness/).
 
 ## Fuzzing Tools
 
