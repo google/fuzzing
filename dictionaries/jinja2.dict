@@ -28,7 +28,7 @@
 "macro"
 
 # Loop elements
-"loop.index
+"loop.index"
 "loop.index0"
 "loop.revindex"
 "loop.first"
