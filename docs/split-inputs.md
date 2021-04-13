@@ -211,8 +211,8 @@ a detailed comment in that file, and the implementation is relatively small.
   that emulates different actions with different parameters initialized with the
   fuzz input.
 
-[FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/master/compiler-rt/include/fuzzer/FuzzedDataProvider.h
-[here]: https://raw.githubusercontent.com/llvm/llvm-project/master/compiler-rt/include/fuzzer/FuzzedDataProvider.h
+[FuzzedDataProvider]: https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/fuzzer/FuzzedDataProvider.h
+[here]: https://raw.githubusercontent.com/llvm/llvm-project/main/compiler-rt/include/fuzzer/FuzzedDataProvider.h
 [net_crl_set_fuzzer]: https://cs.chromium.org/chromium/src/net/cert/crl_set_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_http2_frame_decoder_fuzzer]: https://cs.chromium.org/chromium/src/net/spdy/fuzzing/http2_frame_decoder_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
 [net_parse_cookie_line_fuzzer]: https://cs.chromium.org/chromium/src/net/cookies/parse_cookie_line_fuzzer.cc?rcl=0be62a8d95f7fa1455fce1a76f0fa5b8484d0c8c
