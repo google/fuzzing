@@ -426,7 +426,7 @@ Try this with one of the crashes you have found previously.
 We recommend [Clang Coverage](http://clang.llvm.org/docs/SourceBasedCodeCoverage.html) to visualize and study your code coverage. A simple example:
 ```
 # Build you code for Clang Coverage; link it against a standalone driver for running fuzz targets.
-svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib/fuzzer Fuzzer
+svn export http://github.com/llvm/llvm-project/trunk/compiler-rt/lib/fuzzer Fuzzer
 clang -fprofile-instr-generate -fcoverage-mapping ~/fuzzing/tutorial/libFuzzer/fuzz_me.cc \
                                                   ~/Fuzzer/standalone/StandaloneFuzzTargetMain.c
 mkdir CORPUS # Create an empty corpus dir.
