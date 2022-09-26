@@ -49,7 +49,7 @@ and make sure you see something like
 
 ## 'Hello world' fuzzer
 Definition:
-a **fuzz target** is a function that has the following signature and does something interesting with it's arguments:
+a **fuzz target** is a function that has the following signature and does something interesting with its arguments:
 ```c
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   DoSomethingWithData(Data, Size);
