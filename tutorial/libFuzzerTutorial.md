@@ -425,7 +425,7 @@ Try this with one of the crashes you have found previously.
 ## Visualizing Coverage
 We recommend [Clang Coverage](http://clang.llvm.org/docs/SourceBasedCodeCoverage.html) to visualize and study your code coverage. A simple example:
 ```
-# Build you code for Clang Coverage; link it against a standalone driver for running fuzz targets.
+# Build your code for Clang Coverage; link it against a standalone driver for running fuzz targets.
 svn export http://github.com/llvm/llvm-project/trunk/compiler-rt/lib/fuzzer Fuzzer
 clang -fprofile-instr-generate -fcoverage-mapping ~/fuzzing/tutorial/libFuzzer/fuzz_me.cc \
                                                   ~/Fuzzer/standalone/StandaloneFuzzTargetMain.c
@@ -616,7 +616,7 @@ LeakSanitizer libFuzzer will eventually die with OOM (see above).
 ### Timeouts
 
 Timeouts are equally bad for in-process fuzzing.
-If some intput takes more than 1200 seconds to run libFuzzer will report a
+If some input takes more than 1200 seconds to run libFuzzer will report a
 "timeout" error and exit, dumping the reproducer on disk.
 You may change the default timeout with `-timeout=N`.
 
