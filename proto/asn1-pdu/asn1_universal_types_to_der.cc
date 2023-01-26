@@ -41,8 +41,9 @@ void Encode(const Boolean& boolean, std::vector<uint8_t>& der) {
 }
 
 void Encode(const Integer& integer, std::vector<uint8_t>& der) {
+  // Cannot have an empty integer, so make sure the length is at least 1.
   EncodeTagAndLength(kAsn1Integer,
-                     std::min<size_t>(0x01u, integer.val().size()), der.size(),
+                     std::max<size_t>(0x01u, integer.val().size()), der.size(),
                      der);
 
   if (!integer.val().empty()) {
@@ -139,7 +140,9 @@ void EncodeTimestamp(const google::protobuf::Timestamp& timestamp,
                      bool use_two_digit_year,
                      std::vector<uint8_t>& der) {
   std::string iso_date = google::protobuf::util::TimeUtil::ToString(timestamp);
-  if (iso_date.size() < 25) {
+
+  // Expected date format: yyyy-MM-ddTHH:mm:ssZ (20 characters).
+  if (iso_date.size() < 20) {
     return;
   }
 
