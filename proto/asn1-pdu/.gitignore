@@ -1,0 +1,7 @@
+*.py
+*.pyc
+__pycache__
+
+*.pb.h
+*.pb.cc
+*.o
