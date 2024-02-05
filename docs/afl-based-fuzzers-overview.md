@@ -19,7 +19,7 @@ If you don't know what AFL is, here is a list of helpful resources for you to st
 3. [afl-demo](https://gitlab.com/wolframroesler/afl-demo) - a simple demo of fuzzing C++ programs with AFL.
 4. [afl-cve](https://github.com/mrash/afl-cve) - a collection of the vulnerabilities found with AFL (hasn't been updated since 2017).
 5. [Here](https://tunnelshade.in/blog/2018/01/afl-internals-compile-time-instrumentation/) - you can read about the stuff AFL adds to a program during its build.
-6. [A few](https://copyninja.info/blog/afl-and-network-programs.html) useful tips about fuzzing network applications.
+6. [A few](https://copyninja.in/blog/afl-and-network-programs.html) useful tips about fuzzing network applications.
 
 At the moment this article was being written, the latest version of AFL was 2.52b. The fuzzer is in active development, and with time some side developments are being incorporated into the main AFL branch and grow irrelevant. Today, we can name several useful accessory tools, which are listed in the following chapter.
 
