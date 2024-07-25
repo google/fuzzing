@@ -1,4 +1,4 @@
-# How To Split A Fuzzer-Generated Input Into Several
+# How To Split A Fuzzer-Generated Input Into Several Parts
 
 This document describes several recommended strategies for splitting
 a single fuzzer-generated input into several parts (sub-inputs).
