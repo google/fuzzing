@@ -17,6 +17,8 @@
 #ifndef PROTO_ASN1_PDU_COMMON_H_
 #define PROTO_ASN1_PDU_COMMON_H_
 
+#include <stddef.h>
+
 #include <stdint.h>
 
 #include <vector>
