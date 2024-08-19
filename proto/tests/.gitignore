@@ -1,0 +1,5 @@
+*.py
+*.pyc
+*.pem
+*.der
+*.proto
