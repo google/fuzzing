@@ -392,7 +392,7 @@ In either way, you may want to minimize your corpus,
 that is to create a subset of the corpus that has the same coverage. 
 
 ```shell
-mkdir NEW_CORPPUS
+mkdir NEW_CORPUS
 ./your-fuzzer NEW_CORPUS OLD_CORPUS -merge=1
 ```
 
