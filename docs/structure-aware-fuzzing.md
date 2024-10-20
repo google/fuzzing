@@ -2,9 +2,9 @@
 
 Generation-based fuzzers usually target a single input type, generating inputs
 according to a pre-defined grammar. Good examples of such fuzzers are
-[csmith](https://embed.cs.utah.edu/csmith/) (generates valid C programs)
+[csmith](https://github.com/csmith-project/csmith/) (generates valid C programs)
 and
-[Peach](https://www.peach.tech/)
+[Peach](https://peachtech.gitlab.io/peach-fuzzer-community/WhatIsPeach.html)
 (generates inputs of any type, but requires such a
 type to be expressed as a grammar definition).
 
