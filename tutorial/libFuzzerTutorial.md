@@ -558,7 +558,7 @@ In an infinite loop do the following:
 * Build the fuzz target
 * Copy the current corpus from cloud to local disk
 * Fuzz for some time.
-  * With libFuzzer, use the flag `-max_total_time=N` to set the time in seconds).
+  * With libFuzzer, use the flag `-max_total_time=N` to set the time in seconds.
 * Synchronize the updated corpus back to the cloud
 * Provide the logs, coverage information, crash reports, and crash reproducers
   via e-mail, web interface, or cloud storage.
@@ -596,7 +596,7 @@ also contains a reproducer for the OOM bug.
 Find it. Can you reproduce the OOM?
 
 Sometimes using 2Gb per one target invocation is not a bug,
-and so you can use `-rss_limit_mb=N` to set another limit.`
+and so you can use `-rss_limit_mb=N` to set another limit.
 
 ### Leaks
 
